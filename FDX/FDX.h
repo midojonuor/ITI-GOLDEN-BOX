@@ -113,13 +113,18 @@ typedef struct{
 
 
 extern Std_ReturnType FDX_CreateStartFrame(uint8_t *buffer, uint16_t seqNum);
-extern Std_ReturnType FDX_ParsingFrame(uint8_t *inbuffer, uint16_t inbuffersize,
-		uint16_t *frametype, uint8_t *outbuffer, uint16_t *outbuffersize, uint16_t *groupId);
-extern Std_ReturnType FDX_StopFram(uint8_t *buffer, uint16_t seqNum);
-extern Std_ReturnType FDX_DataExchangeFrame(uint8_t *buffer ,uint16_t seqNum, uint16_t GroupID,uint16_t DataSize,uint8_t *DataBytes);
-extern Std_ReturnType FDX_DataRequestFrame(uint8_t *buffer, uint16_t seqNum, uint16_t GroupID);
-extern Std_ReturnType FDX_StatusFrame(uint8_t *buffer, uint16_t seqNum, uint16_t status, uint64_t timeStamp);
 
+extern Std_ReturnType FDX_CreateStopFrame(uint8_t *buffer, uint16_t seqNum);
+
+extern Std_ReturnType FDX_CreateDataExchangeFrame(uint8_t *buffer ,uint16_t seqNum, uint16_t GroupID,uint16_t DataSize,uint8_t *DataBytes);
+
+extern Std_ReturnType FDX_CreateDataRequestFrame(uint8_t *buffer, uint16_t seqNum, uint16_t GroupID);
+
+extern Std_ReturnType FDX_CreateStatusFrame(uint8_t *buffer, uint16_t seqNum, uint16_t status, uint64_t timeStamp);
+
+extern Std_ReturnType FDX_ParsingFrame(uint8_t *inbuffer, uint16_t inbuffersize,
+		                               uint16_t *frametype, uint8_t *outbuffer,
+								       uint16_t *outbuffersize, uint16_t *groupId);
 
 
 #endif /* FDX_INTERFACE_H_ */

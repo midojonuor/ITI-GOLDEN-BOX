@@ -5,26 +5,35 @@
  *      Author: ghada
  */
 
-#include "stdio.h"
-#include "stdint.h"
+//#include "stdio.h"
+//#include "stdint.h"
+#include "Std_Types.h"
 #include "FDX.h"
 
 #define CMD_SIZE_OFFSET						(16u)
 #define CMD_CODE_OFFSET						(18u)
+#define DATAEX_GROUPID_OFFSET				(20u)
 #define DATAEX_SIZE_OFFSET                  (22u)
 #define DATAEX_BYTES_OFFSET                 (24u)
-#define DATAEX_GROUPID_OFFSET				(20u)
+
+
+static Std_ReturnType DataExchangeHandler(uint8_t *outbuffer, uint16_t *outbuffersize,
+                                          uint8_t *inbuffer,  uint16_t *groupId);
+
+static Std_ReturnType FDX_HeaderCheck(uint8_t *buffer);
+
 
 
 
 /*
  * 	Function Name	: DataExchangeHandler
- * 	Input argu		:*inbuffer, *groupId
- * 	Output argu		:*outbuffer,*outbuffersize
- *	Description		:static fun that handles exchanged date the comes from recived frame  ////
+ * 	Input argu		: *inbuffer, *groupId
+ * 	Output argu		: *outbuffer,*outbuffersize
+ *	Description		: Static Function that handles exchanged date the comes from the received frame  
  * 	return			: result
  */
-static Std_ReturnType DataExchangeHandler(uint8_t *outbuffer, uint16_t *outbuffersize, uint8_t *inbuffer, uint16_t *groupId)
+static Std_ReturnType DataExchangeHandler(uint8_t *outbuffer, uint16_t *outbuffersize,
+                                          uint8_t *inbuffer,  uint16_t *groupId)
 {
 	Std_ReturnType result = 0;
 
@@ -44,7 +53,7 @@ static Std_ReturnType DataExchangeHandler(uint8_t *outbuffer, uint16_t *outbuffe
  * 	Function Name	: FDX_HeaderCheck
  * 	Input argu		: *buffer
  * 	Output argu		: None
- *	Description		:static fuc checks that the received header is valid or invalid
+ *	Description		: Static Function checks that the received header is valid or not
  * 	return			: result
  */
 static Std_ReturnType FDX_HeaderCheck(uint8_t *buffer)
@@ -59,31 +68,31 @@ static Std_ReturnType FDX_HeaderCheck(uint8_t *buffer)
 		{
 			if((pFXD_Header->MajorVersion == MAJOR_VERSION) && (pFXD_Header->MinorVersion == MINOR_VERSION))
 			{
-				if(pFXD_Header->NumOfCMD != 0)
+				if(pFXD_Header->NumOfCMD !=  0)
 				{
-					result=E_OK;
+					result = E_OK;
 				}
 				else
 				{
-					result=E_NOT_OK;
+					result = E_NOT_OK;
 				}
 
 
 			}
 			else
 			{
-				result=E_NOT_OK;
+				result = E_NOT_OK;
 			}
 
 		}
 		else
 		{
-			result=E_NOT_OK;
+			result = E_NOT_OK;
 		}
 	}
 	else
 	{
-		result=E_NOT_OK;
+		result = E_NOT_OK;
 	}
 
 	return result;
@@ -92,29 +101,31 @@ static Std_ReturnType FDX_HeaderCheck(uint8_t *buffer)
 
 /*
  * 	Function Name	: FDX_ParsingFrame
- * 	Input argu		:*inbuffer, inbuffersize
- * 	Output argu		:*frametype,*outbuffer,*outbuffersize
- *  Description		:check the header, exteract command size and code ,check for command and handling command cases
- * 	return			:
+ * 	Input argu		: *inbuffer, inbuffersize
+ * 	Output argu		: *frametype,*outbuffer,*outbuffersize
+ *  Description		: This Function checks the header, extracts command size and code ,checks command type and handles command cases
+ * 	return			: result
  */
 Std_ReturnType FDX_ParsingFrame(uint8_t *inbuffer, uint16_t inbuffersize,
-		uint16_t *frametype, uint8_t *outbuffer, uint16_t *outbuffersize, uint16_t *groupId)
+		                        uint16_t *frametype, uint8_t *outbuffer,
+								uint16_t *outbuffersize, uint16_t *groupId)
 {
-	Std_ReturnType result=E_OK;
+	Std_ReturnType result = E_OK;
 
 	// call fun to check header
 	result = FDX_HeaderCheck(inbuffer);
 
 	if(result == E_NOT_OK)
 	{
-		*frametype = 0; // el *
+		*frametype = 0; 
 	}
 
 	//exteract command size and code
 	else
 	{
 		//data size assigned it at out buffer size
-		*outbuffersize = (uint16_t) inbuffer[CMD_SIZE_OFFSET]	;//dol pointers momkn nt2ked mn el ktba
+		//*outbuffersize = (uint16_t) inbuffer[CMD_SIZE_OFFSET];
+
 		*frametype = (uint16_t) inbuffer[CMD_CODE_OFFSET];
 		//check for command
 
@@ -150,11 +161,11 @@ Std_ReturnType FDX_ParsingFrame(uint8_t *inbuffer, uint16_t inbuffersize,
 
 
 /*
- * 	Function Name	: FDX_CreateStartFrame(
- * 	Input argu		:*buffer, seqNum
- * 	Output argu		:-----------
- *  Description		:setting the header ,command code and command size
- * 	return			:result
+ * 	Function Name	: FDX_CreateStartFrame
+ * 	Input argu		: *buffer, seqNum
+ * 	Output argu		: None
+ *  Description		: This Function sets the header, command code and command size
+ * 	return			: result
  */
 Std_ReturnType FDX_CreateStartFrame(uint8_t *buffer, uint16_t seqNum)
 {
@@ -189,14 +200,14 @@ Std_ReturnType FDX_CreateStartFrame(uint8_t *buffer, uint16_t seqNum)
 
 /*
  * 	Function Name	: FDX_CreateStopFrame
- * 	Input argu		:*buffer, seqNum
- * 	Output argu		:-----------
- *  Description		:setting the header ,command code and command size
- * 	return			:result
+ * 	Input argu		: *buffer, seqNum
+ * 	Output argu		: None
+ *  Description		: This Function sets the header ,command code and command size
+ * 	return			: result
  */
-Std_ReturnType FDX_CreateStopFrame(uint8_t *buffer, uint16_t seqNum)
+extern Std_ReturnType FDX_CreateStopFrame(uint8_t *buffer, uint16_t seqNum)
 {
-	uint8_t result=E_OK;
+	uint8_t result = E_OK;
 	FDX_Stop_t *pFDX_Stop = (FDX_Stop_t *)buffer;
 
 	if(pFDX_Stop != NULL)
@@ -217,7 +228,7 @@ Std_ReturnType FDX_CreateStopFrame(uint8_t *buffer, uint16_t seqNum)
 
 	else
 	{
-		result=E_NOT_OK;
+		result = E_NOT_OK;
 	}
 
 	return result;
@@ -229,19 +240,16 @@ Std_ReturnType FDX_CreateStopFrame(uint8_t *buffer, uint16_t seqNum)
 
 /*
  * 	Function Name	: FDX_CreateDataExchangeFrame
- * 	Input argu		:*buffer, seqNum,uint16_t groupid ,dataSize,dataBytes
- * 	Output argu		:-----------
- *  Description		:CreateDataExchangeFrame by setting header, datasize, databytes and groupID
- * 	return			:result
+ * 	Input argu		: *buffer, seqNum,uint16_t groupid ,dataSize,dataBytes
+ * 	Output argu		: None
+ *  Description		: This Function Creates Data Exchange Frame by setting header, datasize, databytes and groupID
+ * 	return			: result
  */
-Std_ReturnType FDX_CreateDataExchangeFrame(uint8_t *buffer,
-		uint16_t seqNum,
-		uint16_t groupID,
-		uint16_t dataSize,
-		uint8_t *dataBytes)
+Std_ReturnType FDX_CreateDataExchangeFrame(uint8_t  *buffer,  uint16_t seqNum, uint16_t groupID,
+		                                   uint16_t dataSize, uint8_t  *dataBytes)
 
 {
-	uint8_t result=E_OK;
+	uint8_t result = E_OK;
 	FDX_DataExchange_t *pFDX_DataExchange = (FDX_DataExchange_t *) buffer;
 
 	if(pFDX_DataExchange != NULL)
@@ -262,13 +270,13 @@ Std_ReturnType FDX_CreateDataExchangeFrame(uint8_t *buffer,
 
 		for(uint16_t dataindex=0;dataindex<dataSize;dataindex++)
 		{
-			pFDX_DataExchange->DataBytes[dataindex]= (uint8_t)dataBytes[dataindex];		// need to modify this part
+			pFDX_DataExchange->DataBytes[dataindex] = (uint8_t)dataBytes[dataindex]; //need to modify this part
 		}
 	}
 
 	else
 	{
-		result=E_NOT_OK;
+		result = E_NOT_OK;
 	}
 	return result;
 }
@@ -276,36 +284,36 @@ Std_ReturnType FDX_CreateDataExchangeFrame(uint8_t *buffer,
 
 /*
  * 	Function Name	: FDX_CreateDataExchangeFrame
- * 	Input argu		:*buffer, seqNum,uint16_t groupID
- * 	Output argu		:-----------
- *  Description		:Create Data Request Frame by setting headers command code command size and groupID
- * 	return			:result
+ * 	Input argu		: *buffer, seqNum,uint16_t groupID
+ * 	Output argu		: None
+ *  Description		: This Function Creates Data Request Frame by setting headers command code command size and groupID
+ * 	return			: result
  */
-Std_ReturnType FDX_CreateDataReqquestFrame(uint8_t *buffer, uint16_t seqNum, uint16_t groupID)
+Std_ReturnType FDX_CreateDataRequestFrame(uint8_t *buffer, uint16_t seqNum, uint16_t groupID)
 {
-	uint8_t result=E_OK;
-	FDX_DataRequest_t *pFDX_DataReqquest = (FDX_DataRequest_t *)buffer;
+	uint8_t result = E_OK;
+	FDX_DataRequest_t *pFDX_DataRequest = (FDX_DataRequest_t *)buffer;
 
-	if(pFDX_DataReqquest != NULL)
+	if(pFDX_DataRequest != NULL)
 	{
 		/* Assemble Header */
-		pFDX_DataReqquest->Header.Signeture		= (uint64_t) SIGNATURE;
-		pFDX_DataReqquest->Header.MajorVersion	= (uint8_t)  MAJOR_VERSION;
-		pFDX_DataReqquest->Header.MinorVersion	= (uint8_t)  MINOR_VERSION;
-		pFDX_DataReqquest->Header.NumOfCMD		= (uint16_t) NUM_OF_CMD;
-		pFDX_DataReqquest->Header.SeqNum		= (uint16_t) seqNum;
-		pFDX_DataReqquest->Header.Reserved		= (uint16_t) RESERVED_VALUE;
+		pFDX_DataRequest->Header.Signeture		= (uint64_t) SIGNATURE;
+		pFDX_DataRequest->Header.MajorVersion	= (uint8_t)  MAJOR_VERSION;
+		pFDX_DataRequest->Header.MinorVersion	= (uint8_t)  MINOR_VERSION;
+		pFDX_DataRequest->Header.NumOfCMD		= (uint16_t) NUM_OF_CMD;
+		pFDX_DataRequest->Header.SeqNum		= (uint16_t) seqNum;
+		pFDX_DataRequest->Header.Reserved		= (uint16_t) RESERVED_VALUE;
 
 		/* Add command */
-		pFDX_DataReqquest->CommandSize			= (uint16_t) CMD_DATA_REG_SIZE;
-		pFDX_DataReqquest->CommandCode			= (uint16_t) Cmd_DataRequest;
-		pFDX_DataReqquest->GroupID 				= (uint16_t) groupID;
+		pFDX_DataRequest->CommandSize			= (uint16_t) CMD_DATA_REG_SIZE;
+		pFDX_DataRequest->CommandCode			= (uint16_t) Cmd_DataRequest;
+		pFDX_DataRequest->GroupID 				= (uint16_t) groupID;
 
 	}
 
 	else
 	{
-		result=E_NOT_OK;
+		result = E_NOT_OK;
 	}
 
 	return result;
@@ -315,14 +323,14 @@ Std_ReturnType FDX_CreateDataReqquestFrame(uint8_t *buffer, uint16_t seqNum, uin
 
 /*
  * 	Function Name	: FDX_CreateDataExchangeFrame
- * 	Input argu		:buffer,  seqNum, status, timeStamp
- * 	Output argu		:-----------
- *  Description		Create Status Frame by setting headers command code command size ,status and time stamp
- * 	return			:result
+ * 	Input argu		: buffer, seqNum, status, timeStamp
+ * 	Output argu		: None
+ *  Description		: This Function Creates Status Frame by setting headers command code command size ,status and time stamp
+ * 	return			: result
  */
 Std_ReturnType FDX_CreateStatusFrame(uint8_t *buffer, uint16_t seqNum, uint16_t status, uint64_t timeStamp)
 {
-	uint8_t result=E_OK;
+	uint8_t result = E_OK;
 	FDX_Status_t *pFDX_Status = (FDX_Status_t *)buffer;
 
 	if(pFDX_Status != NULL)
@@ -345,7 +353,7 @@ Std_ReturnType FDX_CreateStatusFrame(uint8_t *buffer, uint16_t seqNum, uint16_t 
 
 	else
 	{
-		result=E_NOT_OK;
+		result = E_NOT_OK;
 	}
 
 	return result;
