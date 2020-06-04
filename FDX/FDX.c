@@ -1,13 +1,17 @@
-/*
- * FDX.c
- *
- *  Created on: May 27, 2020
- *      Author: ghada
+/**
+ * @file FDX.c
+ * @author Family
+ * @brief This file is the implementation of FDX protocol
+ * @version 0.1
+ * @date 2020-06-04
+ * 
+ * @copyright Copyright (c) 2020
+ * 
  */
 
-//#include "stdio.h"
-//#include "stdint.h"
-#include "Std_Types.h"
+#include "stdio.h"
+#include "stdint.h"
+
 #include "FDX.h"
 
 #define CMD_SIZE_OFFSET						(16u)
@@ -17,48 +21,27 @@
 #define DATAEX_BYTES_OFFSET                 (24u)
 
 
-static Std_ReturnType DataExchangeHandler(uint8_t *outbuffer, uint16_t *outbuffersize,
-                                          uint8_t *inbuffer,  uint16_t *groupId);
-
-static Std_ReturnType FDX_HeaderCheck(uint8_t *buffer);
 
 
+static Std_ReturnType HeaderCheck(uint8_t *buffer);
+static Std_ReturnType DataExchangeHandler(uint16_t *Datasize, uint8_t *inbuffer, uint16_t *groupId);
 
 
-/*
- * 	Function Name	: DataExchangeHandler
- * 	Input argu		: *inbuffer, *groupId
- * 	Output argu		: *outbuffer,*outbuffersize
- *	Description		: Static Function that handles exchanged date the comes from the received frame  
- * 	return			: result
+
+
+
+
+
+
+/**
+ * @brief                 This Function Checks whether the Header is valid or not
+ * 
+ * @param buffer          Holds the frame 
+ * @return Std_ReturnType returns E_OK if there is a valid header and  E_Not_OK if there is invalid header
  */
-static Std_ReturnType DataExchangeHandler(uint8_t *outbuffer, uint16_t *outbuffersize,
-                                          uint8_t *inbuffer,  uint16_t *groupId)
+static Std_ReturnType HeaderCheck(uint8_t *buffer)
 {
-	Std_ReturnType result = 0;
-
-	uint16_t bufferIndx = 0;
-	*outbuffersize = (uint16_t) inbuffer[DATAEX_SIZE_OFFSET];
-	*groupId = (uint16_t) inbuffer[DATAEX_GROUPID_OFFSET];
-
-	for(bufferIndx = 0; bufferIndx < inbuffer[DATAEX_SIZE_OFFSET]; ++inbuffer[DATAEX_SIZE_OFFSET])
-	{
-		outbuffer[bufferIndx] = (uint8_t) inbuffer[DATAEX_BYTES_OFFSET + bufferIndx];
-	}
-
-	return result;
-}
-
-/*
- * 	Function Name	: FDX_HeaderCheck
- * 	Input argu		: *buffer
- * 	Output argu		: None
- *	Description		: Static Function checks that the received header is valid or not
- * 	return			: result
- */
-static Std_ReturnType FDX_HeaderCheck(uint8_t *buffer)
-{
-	uint8_t result = E_OK;
+	Std_ReturnType errorStatus = E_OK;
 	FDX_Header_t *pFXD_Header = (FDX_Header_t *)buffer;
 
 	if(pFXD_Header != NULL)
@@ -70,64 +53,62 @@ static Std_ReturnType FDX_HeaderCheck(uint8_t *buffer)
 			{
 				if(pFXD_Header->NumOfCMD !=  0)
 				{
-					result = E_OK;
+					errorStatus = E_OK;
 				}
 				else
 				{
-					result = E_NOT_OK;
+					errorStatus = E_NOT_OK;
 				}
 
 
 			}
 			else
 			{
-				result = E_NOT_OK;
+				errorStatus = E_NOT_OK;
 			}
 
 		}
 		else
 		{
-			result = E_NOT_OK;
+			errorStatus = E_NOT_OK;
 		}
 	}
 	else
 	{
-		result = E_NOT_OK;
+		errorStatus = E_NOT_OK;
 	}
 
-	return result;
+	return errorStatus;
 }
 
 
-/*
- * 	Function Name	: FDX_ParsingFrame
- * 	Input argu		: *inbuffer, inbuffersize
- * 	Output argu		: *frametype,*outbuffer,*outbuffersize
- *  Description		: This Function checks the header, extracts command size and code ,checks command type and handles command cases
- * 	return			: result
+/**
+ * @brief                  This Function Specifies the Frame type 
+ * 
+ * @param inbuffer         Holds The input Frame
+ * @param frametype        Holds The Command Code
+ * @param datasize         Holds The number of bytes of the data
+ * @param groupId          Holds the Frame direction and peripheral number
+ * @return  Std_ReturnType returns E_OK if there is a valid header and E_Not_OK if there is invalid header 
  */
-Std_ReturnType FDX_ParsingFrame(uint8_t *inbuffer, uint16_t inbuffersize,
-		                        uint16_t *frametype, uint8_t *outbuffer,
-								uint16_t *outbuffersize, uint16_t *groupId)
+Std_ReturnType FDX_ParsingFrame(uint8_t *inbuffer, uint16_t *frametype, uint16_t *datasize, uint16_t *groupId)
 {
-	Std_ReturnType result = E_OK;
+	Std_ReturnType errorStatus = E_OK;
 
-	// call fun to check header
-	result = FDX_HeaderCheck(inbuffer);
+	/* Checks if the Header is valid or not*/
+	errorStatus = HeaderCheck(inbuffer);
 
-	if(result == E_NOT_OK)
+	if(errorStatus == E_NOT_OK)
 	{
 		*frametype = 0; 
 	}
 
-	//exteract command size and code
+	
 	else
 	{
-		//data size assigned it at out buffer size
-		//*outbuffersize = (uint16_t) inbuffer[CMD_SIZE_OFFSET];
-
+	
 		*frametype = (uint16_t) inbuffer[CMD_CODE_OFFSET];
-		//check for command
+		/*check the command code*/
 
 		switch(*frametype)
 		{
@@ -139,7 +120,7 @@ Std_ReturnType FDX_ParsingFrame(uint8_t *inbuffer, uint16_t inbuffersize,
 			break;
 		case Cmd_DataExchange:
 			/* call static Data exchange handler */
-			DataExchangeHandler(outbuffer, outbuffersize, inbuffer, groupId);
+			DataExchangeHandler(datasize, inbuffer, groupId);
 			break;
 
 		case Cmd_DataRequest:
@@ -155,72 +136,57 @@ Std_ReturnType FDX_ParsingFrame(uint8_t *inbuffer, uint16_t inbuffersize,
 		}
 	}
 
-	return result;
+	return errorStatus;
 
 }
 
 
-/*
- * 	Function Name	: FDX_CreateStartFrame
- * 	Input argu		: *buffer, seqNum
- * 	Output argu		: None
- *  Description		: This Function sets the header, command code and command size
- * 	return			: result
+/**
+ * @brief                 This Function creates the Start cmd of the frame
+ * 
+ * @param buffer          Holds the input Frame
+ * @param seqNum          Holds the frame order 
+ * @return Std_ReturnType returns E_OK if there is a start command and E_Not_OK if there is no start command
  */
-Std_ReturnType FDX_CreateStartFrame(uint8_t *buffer, uint16_t seqNum)
+Std_ReturnType FDX_CreateStartCmd(uint8_t *buffer, uint16_t seqNum)
 {
-	uint8_t result = E_OK;
-	FXD_Start_t *pFXD_Start = (FXD_Start_t *)buffer;
+	Std_ReturnType errorStatus = E_OK;
+	FXD_Start_t *pFXD_Start = (FXD_Start_t *)&buffer[CMD_SIZE_OFFSET];
 
 	if(pFXD_Start != NULL)
 	{
-		/* Assemble Header */
-		pFXD_Start->Header.Signeture 		= (uint64_t) SIGNATURE;
-		pFXD_Start->Header.MajorVersion 	= (uint8_t)  MAJOR_VERSION;
-		pFXD_Start->Header.MinorVersion 	= (uint8_t)  MINOR_VERSION;
-		pFXD_Start->Header.NumOfCMD 		= (uint16_t) NUM_OF_CMD;
-		pFXD_Start->Header.SeqNum 			= (uint16_t) seqNum;
-		pFXD_Start->Header.Reserved 		= (uint16_t) RESERVED_VALUE;
 
-		/* Add command */
+		/* Assign command code and command size */
 		pFXD_Start->CommandSize 			= (uint16_t) CMD_START_SIZE;
 		pFXD_Start->CommandCode 			= (uint16_t) Cmd_Start;
 	}
 
 	else
 	{
-		result = E_NOT_OK;
+		errorStatus = E_NOT_OK;
 	}
 
-	return result;
+	return errorStatus;
 }
 
 
 
-
-/*
- * 	Function Name	: FDX_CreateStopFrame
- * 	Input argu		: *buffer, seqNum
- * 	Output argu		: None
- *  Description		: This Function sets the header ,command code and command size
- * 	return			: result
- */
-extern Std_ReturnType FDX_CreateStopFrame(uint8_t *buffer, uint16_t seqNum)
+/**
+ * @brief                 This Function creates the Stop cmd of the frame
+ * 
+ * @param buffer          Holds the input Frame
+ * @param seqNum          Holds the frame order 
+ * @return Std_ReturnType returns E_OK if there is a stop command and E_Not_OK if there is no stop command
+*/
+extern Std_ReturnType FDX_CreateStopCmd(uint8_t *buffer, uint16_t seqNum)
 {
-	uint8_t result = E_OK;
-	FDX_Stop_t *pFDX_Stop = (FDX_Stop_t *)buffer;
+	Std_ReturnType errorStatus = E_OK;
+	FDX_Stop_t *pFDX_Stop = (FDX_Stop_t *)&buffer[CMD_SIZE_OFFSET];
 
 	if(pFDX_Stop != NULL)
 	{
-		/* Assemble Header */
-		pFDX_Stop->Header.Signeture			= (uint64_t) SIGNATURE;
-		pFDX_Stop->Header.MajorVersion		= (uint8_t)  MAJOR_VERSION;
-		pFDX_Stop->Header.MinorVersion		= (uint8_t)  MINOR_VERSION;
-		pFDX_Stop->Header.NumOfCMD			= (uint16_t) NUM_OF_CMD;
-		pFDX_Stop->Header.SeqNum			= (uint16_t) seqNum;
-		pFDX_Stop->Header.Reserved			= (uint16_t) RESERVED_VALUE;
-
-		/* Add command */
+		
+		/* Assign command code and command size */
 		pFDX_Stop->CommandSize				= (uint16_t) CMD_STOP_SIZE;
 		pFDX_Stop->CommandCode				= (uint16_t) Cmd_Stop;
 
@@ -228,83 +194,71 @@ extern Std_ReturnType FDX_CreateStopFrame(uint8_t *buffer, uint16_t seqNum)
 
 	else
 	{
-		result = E_NOT_OK;
+		errorStatus = E_NOT_OK;
 	}
 
-	return result;
+	return errorStatus;
 }
 
 
 
 
 
-/*
- * 	Function Name	: FDX_CreateDataExchangeFrame
- * 	Input argu		: *buffer, seqNum,uint16_t groupid ,dataSize,dataBytes
- * 	Output argu		: None
- *  Description		: This Function Creates Data Exchange Frame by setting header, datasize, databytes and groupID
- * 	return			: result
+/**
+ * @brief                 This Function creates data exchange commad 
+ * 
+ * @param buffer          Holds the input frame
+ * @param seqNum          Holds the frame order 
+ * @param groupID         Holds the Frame direction and peripheral number
+ * @param dataSize        Holds The number of bytes of the data
+ * @param dataBytes       Holds the data
+ * @return Std_ReturnType returns E_OK if there is a data exchange command and E_Not_OK if there is no data exchange command
  */
-Std_ReturnType FDX_CreateDataExchangeFrame(uint8_t  *buffer,  uint16_t seqNum, uint16_t groupID,
+Std_ReturnType FDX_CreateDataExchangeCmd(uint8_t  *buffer,  uint16_t seqNum, uint16_t groupID,
 		                                   uint16_t dataSize, uint8_t  *dataBytes)
 
 {
-	uint8_t result = E_OK;
-	FDX_DataExchange_t *pFDX_DataExchange = (FDX_DataExchange_t *) buffer;
+	Std_ReturnType errorStatus = E_OK;
+	FDX_DataExchange_t *pFDX_DataExchange = (FDX_DataExchange_t *) &buffer[CMD_SIZE_OFFSET];
 
 	if(pFDX_DataExchange != NULL)
 	{
-		/* Assemble Header */
-		pFDX_DataExchange->Header.Signeture		= (uint64_t) SIGNATURE;
-		pFDX_DataExchange->Header.MajorVersion	= (uint8_t)  MAJOR_VERSION;
-		pFDX_DataExchange->Header.MinorVersion	= (uint8_t)  MINOR_VERSION;
-		pFDX_DataExchange->Header.NumOfCMD		= (uint16_t) NUM_OF_CMD;
-		pFDX_DataExchange->Header.SeqNum		= (uint16_t) seqNum;
-		pFDX_DataExchange->Header.Reserved		= (uint16_t) RESERVED_VALUE;
-
-		/* Add command */
+		
+		/* Assign command code, command size,GroupID and Data size */
 		pFDX_DataExchange->CommandSize			= CMD_DATA_EXCHANGE_SIZE;
 		pFDX_DataExchange->CommandCode			= (uint16_t) Cmd_DataExchange;
 		pFDX_DataExchange->GroupID				= groupID;
 		pFDX_DataExchange->DataSize				= dataSize;
 
-		for(uint16_t dataindex=0;dataindex<dataSize;dataindex++)
-		{
-			pFDX_DataExchange->DataBytes[dataindex] = (uint8_t)dataBytes[dataindex]; //need to modify this part
-		}
+		pFDX_DataExchange->DataBytes= *((uint8_t*)dataBytes); 
+
 	}
 
 	else
 	{
-		result = E_NOT_OK;
+		errorStatus = E_NOT_OK;
 	}
-	return result;
+	return errorStatus;
 }
 
 
-/*
- * 	Function Name	: FDX_CreateDataExchangeFrame
- * 	Input argu		: *buffer, seqNum,uint16_t groupID
- * 	Output argu		: None
- *  Description		: This Function Creates Data Request Frame by setting headers command code command size and groupID
- * 	return			: result
+/**
+ * @brief                 This Function creates data request commad 
+ * 
+ * @param buffer          Holds the input frame
+ * @param seqNum          Holds the frame order 
+ * @param groupID         Holds the Frame direction and peripheral number
+ * @return Std_ReturnType returns E_OK if there is a data request command and E_Not_OK if there is no data request command
  */
-Std_ReturnType FDX_CreateDataRequestFrame(uint8_t *buffer, uint16_t seqNum, uint16_t groupID)
+Std_ReturnType FDX_CreateDataRequestCmd(uint8_t *buffer, uint16_t seqNum, uint16_t groupID)
 {
-	uint8_t result = E_OK;
-	FDX_DataRequest_t *pFDX_DataRequest = (FDX_DataRequest_t *)buffer;
+	Std_ReturnType errorStatus = E_OK;
+	FDX_DataRequest_t *pFDX_DataRequest = (FDX_DataRequest_t *)&buffer[CMD_SIZE_OFFSET];
 
 	if(pFDX_DataRequest != NULL)
 	{
-		/* Assemble Header */
-		pFDX_DataRequest->Header.Signeture		= (uint64_t) SIGNATURE;
-		pFDX_DataRequest->Header.MajorVersion	= (uint8_t)  MAJOR_VERSION;
-		pFDX_DataRequest->Header.MinorVersion	= (uint8_t)  MINOR_VERSION;
-		pFDX_DataRequest->Header.NumOfCMD		= (uint16_t) NUM_OF_CMD;
-		pFDX_DataRequest->Header.SeqNum		= (uint16_t) seqNum;
-		pFDX_DataRequest->Header.Reserved		= (uint16_t) RESERVED_VALUE;
-
-		/* Add command */
+		
+		/* Assign command code, command size and GroupID  */
 		pFDX_DataRequest->CommandSize			= (uint16_t) CMD_DATA_REG_SIZE;
 		pFDX_DataRequest->CommandCode			= (uint16_t) Cmd_DataRequest;
 		pFDX_DataRequest->GroupID 				= (uint16_t) groupID;
@@ -313,37 +267,32 @@ Std_ReturnType FDX_CreateDataRequestFrame(uint8_t *buffer, uint16_t seqNum, uint
 
 	else
 	{
-		result = E_NOT_OK;
+		errorStatus = E_NOT_OK;
 	}
 
-	return result;
+	return errorStatus;
 
 }
 
 
-/*
- * 	Function Name	: FDX_CreateDataExchangeFrame
- * 	Input argu		: buffer, seqNum, status, timeStamp
- * 	Output argu		: None
- *  Description		: This Function Creates Status Frame by setting headers command code command size ,status and time stamp
- * 	return			: result
+/**
+ * @brief                 This Function creates Status command
+ * 
+ * @param buffer          Holds the input frame
+ * @param seqNum          Holds the frame order
+ * @param status          Holds the frame state 
+ * @param timeStamp       Holds the estimated action time
+ * @return Std_ReturnType returns E_OK if there is a data request command and E_Not_OK if there is no data request command
  */
-Std_ReturnType FDX_CreateStatusFrame(uint8_t *buffer, uint16_t seqNum, uint16_t status, uint64_t timeStamp)
+Std_ReturnType FDX_CreateStatusCmd(uint8_t *buffer, uint16_t seqNum, uint16_t status, uint64_t timeStamp)
 {
-	uint8_t result = E_OK;
-	FDX_Status_t *pFDX_Status = (FDX_Status_t *)buffer;
+	Std_ReturnType errorStatus = E_OK;
+	FDX_Status_t *pFDX_Status = (FDX_Status_t *)&buffer[CMD_SIZE_OFFSET];
 
 	if(pFDX_Status != NULL)
 	{
-		/* Assemble Header */
-		pFDX_Status->Header.Signeture		= (uint64_t) SIGNATURE;
-		pFDX_Status->Header.MajorVersion	= (uint8_t)  MAJOR_VERSION;
-		pFDX_Status->Header.MinorVersion	= (uint8_t)  MINOR_VERSION;
-		pFDX_Status->Header.NumOfCMD		= (uint16_t) NUM_OF_CMD;
-		pFDX_Status->Header.SeqNum			= (uint16_t) seqNum;
-		pFDX_Status->Header.Reserved		= (uint16_t) RESERVED_VALUE;
-
-		/* Add command */
+	
+		/* Assign command Info */
 		pFDX_Status->CommandSize			= (uint16_t) CMD_STATUS_SIZE;
 		pFDX_Status->CommandCode			= (uint16_t) Cmd_Status;
 		pFDX_Status->Status					= (uint16_t) status;
@@ -353,8 +302,72 @@ Std_ReturnType FDX_CreateStatusFrame(uint8_t *buffer, uint16_t seqNum, uint16_t 
 
 	else
 	{
-		result = E_NOT_OK;
+		errorStatus = E_NOT_OK;
 	}
 
-	return result;
+	return errorStatus;
+}
+
+/**
+ * @brief                 This Function extracts the Group ID and Data size
+ * 
+ * @param Datasize        Holds the number of data bytes
+ * @param inbuffer        Holds the input frame
+ * @param groupId         Holds the Frame direction and peripheral number
+ * @return Std_ReturnType returns E_OK if there is a received frame and E_Not_OK if there is no received frame
+ */
+
+
+static Std_ReturnType DataExchangeHandler(uint16_t *Datasize, uint8_t *inbuffer, uint16_t *groupId)
+{
+    Std_ReturnType errorStatus = E_OK;
+    FDX_DataExchange_t *pFDX_DataExchange = (FDX_DataExchange_t *)&inbuffer[DATAEX_GROUPID_OFFSET] ;
+    /* check if there is a received data*/
+    if(inbuffer != NULL)
+    {  
+        /*Get group ID */
+        *groupId = pFDX_DataExchange->GroupID;
+
+        /*assign data size*/
+       *Datasize = pFDX_DataExchange->DataSize;
+
+       
+    }
+    else
+    {
+        errorStatus = E_NOT_OK;
+    }
+    
+    return errorStatus;
+}
+
+
+/**
+ * @brief                 This Function creates the header of the frame
+ * 
+ * @param buffer          Holds the input frame 
+ * @param seqNum          Holds the frame order
+ * @return Std_ReturnType returns E_OK if there a frame header and E_Not_OK if there is no a frame header
+ */
+ Std_ReturnType FDX_CreateFrameHeader(uint8_t *buffer, uint16_t seqNum)
+{
+
+	Std_ReturnType errorStatus = E_OK;
+	FDX_Header_t *pFDX_Header = (FDX_Header_t *)buffer;
+
+	if(pFDX_Header != NULL)
+	{
+		/* Assemble Header */
+		pFDX_Header->Signeture 		= (uint64_t) SIGNATURE;
+		pFDX_Header->MajorVersion 	= (uint8_t)  MAJOR_VERSION;
+		pFDX_Header->MinorVersion 	= (uint8_t)  MINOR_VERSION;
+		pFDX_Header->NumOfCMD 		= (uint16_t) NUM_OF_CMD;
+		pFDX_Header->SeqNum 		= (uint16_t) seqNum;
+		pFDX_Header->Reserved 		= (uint16_t) RESERVED_VALUE;
+  }
+	else
+	{
+		errorStatus = E_NOT_OK;
+	}
+	return errorStatus;
 }
