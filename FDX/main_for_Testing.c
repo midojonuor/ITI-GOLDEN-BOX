@@ -5,16 +5,34 @@
 #include "FDX.h"
 
 
-uint8_t buffer[1024];
 
 int 
 main(int argc, char **argv)
 {
-	FDX_Header_t *pFDX_Header = (FDX_Header_t *) buffer;
-	FDX_Start_t *pFDX_Start = (FDX_Start_t *)&buffer[CMD_SIZE_OFFSET];
+	uint8_t buffer[1024] ={0};
+
+	uint16_t frametype ;
+	uint16_t datasize;
+	uint16_t groupId;
+
+
 	FDX_Stop_t *pFDX_Stop = (FDX_Stop_t *)&buffer[CMD_SIZE_OFFSET];
 	FDX_DataExchange_t *pFDX_DataExchange = (FDX_DataExchange_t *)&buffer[CMD_SIZE_OFFSET];
 	FDX_Status_t *pFDX_Status = (FDX_Status_t *)&buffer[CMD_SIZE_OFFSET];
+
+
+	FDX_Header_t *pFDX_Header = (FDX_Header_t *)buffer;
+	FDX_DataExchange_t *pFDX_Start = (FDX_DataExchange_t *) &buffer[CMD_SIZE_OFFSET];
+
+	pFDX_Header->Signeture = SIGNATURE;
+	pFDX_Header->MajorVersion = MAJOR_VERSION;
+	pFDX_Header->MinorVersion = MINOR_VERSION;
+	pFDX_Header->NumOfCMD = 1;
+
+	pFDX_Start->CommandCode = Cmd_DataExchange;
+	pFDX_Start->CommandSize = CMD_START_SIZE;
+	pFDX_Start->GroupID = PERIPH_ID_DIGITAL_OUTPUT;
+
 
 	FDX_CreateFrameHeader(buffer, 6);
 	printf("----------------------Header Test-------------------------\n");
@@ -29,6 +47,7 @@ main(int argc, char **argv)
 	printf("----------------------Start Command test-------------------------\n");
 	printf("Command Size: %d\n", pFDX_Start->CommandSize);
 	printf("Command Code: %d\n", pFDX_Start->CommandCode);
+
 
 
 	FDX_CreateStopCmd(buffer);
@@ -53,6 +72,10 @@ main(int argc, char **argv)
 	printf("Time Stamp: %d\n", pFDX_Status->TimeStamp);
 
 
+
+	FDX_ParsingFrame(buffer, &frametype, &datasize, &groupId);
+	printf("----------------------Parsing Frame test-------------------------\n");
+	printf("Frame type: %d\n", frametype);
 
 	return 0;
 }

@@ -17,9 +17,41 @@
 
 
 
+/**
+ * @brief                 This Function extracts the Group ID and Data size
+ *
+ * @param Datasize        Holds the number of data bytes
+ * @param inbuffer        Holds the input frame
+ * @param groupId         Holds the Frame direction and peripheral number
+ * @return Std_ReturnType returns E_OK if there is a received frame and E_Not_OK if there is no received frame
+ */
 
-static Std_ReturnType HeaderCheck(uint8_t *buffer);
-static Std_ReturnType DataExchangeHandler(uint16_t *Datasize, uint8_t *inbuffer, uint16_t *groupId);
+
+static Std_ReturnType DataExchangeHandler(uint16_t *Datasize, uint8_t *inbuffer, uint16_t *groupId)
+{
+    Std_ReturnType errorStatus = E_OK;
+    FDX_DataExchange_t *pFDX_DataExchange = (FDX_DataExchange_t *)&inbuffer[DATAEX_GROUPID_OFFSET] ;
+    /* check if there is a received data*/
+    if(inbuffer != NULL)
+    {
+        /*Get group ID */
+        *groupId = pFDX_DataExchange->GroupID;
+
+        /*assign data size*/
+       *Datasize = pFDX_DataExchange->DataSize;
+
+
+    }
+    else
+    {
+        errorStatus = E_NOT_OK;
+    }
+
+    return errorStatus;
+}
+
+
+
 
 
 
@@ -37,16 +69,16 @@ static Std_ReturnType DataExchangeHandler(uint16_t *Datasize, uint8_t *inbuffer,
 static Std_ReturnType HeaderCheck(uint8_t *buffer)
 {
 	Std_ReturnType errorStatus = E_OK;
-	FDX_Header_t *pFXD_Header = (FDX_Header_t *)buffer;
+	FDX_Header_t *pFDX_Header = (FDX_Header_t *)buffer;
 
-	if(pFXD_Header != NULL)
+	if(pFDX_Header != NULL)
 	{
 		/* Assemble Header */
-		if(pFXD_Header->Signeture == SIGNATURE)
+		if(pFDX_Header->Signeture == SIGNATURE)
 		{
-			if((pFXD_Header->MajorVersion == MAJOR_VERSION) && (pFXD_Header->MinorVersion == MINOR_VERSION))
+			if((pFDX_Header->MajorVersion == MAJOR_VERSION) && (pFDX_Header->MinorVersion == MINOR_VERSION))
 			{
-				if(pFXD_Header->NumOfCMD !=  0)
+				if(pFDX_Header->NumOfCMD !=  0)
 				{
 					errorStatus = E_OK;
 				}
@@ -93,14 +125,14 @@ Std_ReturnType FDX_ParsingFrame(uint8_t *inbuffer, uint16_t *frametype, uint16_t
 
 	if(errorStatus == E_NOT_OK)
 	{
-		*frametype = 0; 
+		*frametype = 0;
 	}
 
-	
+
 	else
 	{
-	
-		*frametype = (uint16_t) inbuffer[CMD_CODE_OFFSET];
+
+		*frametype = (uint16_t ) inbuffer[CMD_CODE_OFFSET];
 		/*check the command code*/
 
 		switch(*frametype)
@@ -143,13 +175,13 @@ Std_ReturnType FDX_ParsingFrame(uint8_t *inbuffer, uint16_t *frametype, uint16_t
 Std_ReturnType FDX_CreateStartCmd(uint8_t *buffer)
 {
 	Std_ReturnType errorStatus = E_OK;
-	FDX_Start_t *pFXD_Start = (FDX_Start_t *)&buffer[CMD_SIZE_OFFSET];
+	FDX_Start_t *pFDX_Start = (FDX_Start_t *)&buffer[CMD_SIZE_OFFSET];
 
-	if(pFXD_Start != NULL)
+	if(pFDX_Start != NULL)
 	{
 		/* Assign command code and command size */
-		pFXD_Start->CommandSize 			= (uint16_t) CMD_START_SIZE;
-		pFXD_Start->CommandCode 			= (uint16_t) Cmd_Start;
+		pFDX_Start->CommandSize 			= (uint16_t) CMD_START_SIZE;
+		pFDX_Start->CommandCode 			= (uint16_t) Cmd_Start;
 	}
 
 	else
@@ -296,39 +328,6 @@ Std_ReturnType FDX_CreateStatusCmd(uint8_t *buffer, uint16_t status, uint64_t ti
 	}
 
 	return errorStatus;
-}
-
-/**
- * @brief                 This Function extracts the Group ID and Data size
- * 
- * @param Datasize        Holds the number of data bytes
- * @param inbuffer        Holds the input frame
- * @param groupId         Holds the Frame direction and peripheral number
- * @return Std_ReturnType returns E_OK if there is a received frame and E_Not_OK if there is no received frame
- */
-
-
-static Std_ReturnType DataExchangeHandler(uint16_t *Datasize, uint8_t *inbuffer, uint16_t *groupId)
-{
-    Std_ReturnType errorStatus = E_OK;
-    FDX_DataExchange_t *pFDX_DataExchange = (FDX_DataExchange_t *)&inbuffer[DATAEX_GROUPID_OFFSET] ;
-    /* check if there is a received data*/
-    if(inbuffer != NULL)
-    {  
-        /*Get group ID */
-        *groupId = pFDX_DataExchange->GroupID;
-
-        /*assign data size*/
-       *Datasize = pFDX_DataExchange->DataSize;
-
-       
-    }
-    else
-    {
-        errorStatus = E_NOT_OK;
-    }
-    
-    return errorStatus;
 }
 
 

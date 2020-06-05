@@ -75,9 +75,9 @@ typedef uint8_t Std_ReturnType;
  * @brief the Peripheral ID
  * 
  */
-
-#define PERIPH_ID_DIGITAL_INPUT  0
-#define PERIPH_ID_DIGITAL_OUTPUT 1
+#define PERIPH_ID_INVALID		0
+#define PERIPH_ID_DIGITAL_INPUT  1
+#define PERIPH_ID_DIGITAL_OUTPUT 2
 
 /**
  * @brief the status indicators
@@ -220,9 +220,6 @@ typedef struct{
 
 /**
  * @brief                 This Function creates the Start cmd of the frame
- * 
- * @param buffer          Holds the input Frame
- * @return Std_ReturnType returns E_OK if there is a start command and E_Not_OK if there is no start command
  */
 extern Std_ReturnType FDX_CreateStartCmd(uint8_t *buffer);
 
@@ -230,9 +227,6 @@ extern Std_ReturnType FDX_CreateStartCmd(uint8_t *buffer);
 
 /**
  * @brief                 This Function creates the Stop cmd of the frame
- * 
- * @param buffer          Holds the input Frame
- * @return Std_ReturnType returns E_OK if there is a stop command and E_Not_OK if there is no stop command
  */
 
 extern Std_ReturnType FDX_CreateStopCmd(uint8_t *buffer);
@@ -240,60 +234,32 @@ extern Std_ReturnType FDX_CreateStopCmd(uint8_t *buffer);
 
 /**
  * @brief                 This Function creates data exchange commad 
- * 
- * @param buffer          Holds the input frame
- * @param seqNum          Holds the frame order 
- * @param groupID         Holds the Frame direction and peripheral number
- * @param dataSize        Holds The number of bytes of the data
- * @param dataBytes       Holds the data
- * @return Std_ReturnType returns E_OK if there is a data exchange command and E_Not_OK if there is no data exchange command
  */
 
 extern Std_ReturnType FDX_CreateDataExchangeCmd(uint8_t *buffer ,uint16_t GroupID,uint16_t DataSize,uint8_t *DataBytes);
 
 /**
  * @brief                 This Function creates data request commad 
- * 
- * @param buffer          Holds the input frame
- * @param seqNum          Holds the frame order 
- * @param groupID         Holds the Frame direction and peripheral number
- * @return Std_ReturnType returns E_OK if there is a data request command and E_Not_OK if there is no data request command
  */
 
 extern Std_ReturnType FDX_CreateDataRequestCmd(uint8_t *buffer, uint16_t seqNum, uint16_t GroupID);
 
 /**
  * @brief                 This Function creates Status command
- * 
- * @param buffer          Holds the input frame
- * @param seqNum          Holds the frame order
- * @param status          Holds the frame state 
- * @param timeStamp       Holds the estimated action time
- * @return Std_ReturnType returns E_OK if there is a data request command and E_Not_OK if there is no data request command
  */
 extern Std_ReturnType FDX_CreateStatusCmd(uint8_t *buffer, uint16_t status, uint64_t timeStamp);
 
 
 /**
  * @brief                  This Function Specifies the Frame type 
- * 
- * @param inbuffer         Holds The input Frame
- * @param frametype        Holds The Command Code
- * @param datasize         Holds The number of bytes of the data
- * @param groupId          Holds the Frame direction and peripheral number
- * @return  Std_ReturnType returns E_OK if there is a valid header and E_Not_OK if there is invalid header 
  */
-extern Std_ReturnType FDX_ParsingFrame(uint8_t *inbuffer, 
+extern Std_ReturnType FDX_ParsingFrame(uint8_t *inbuffer,
 		uint16_t *frametype,
 		uint16_t *datasize, uint16_t *groupId);
 
 
 /**
  * @brief                 This Function creates the header of the frame
- * 
- * @param buffer          Holds the input frame 
- * @param seqNum          Holds the frame order
- * @return Std_ReturnType returns E_OK if there a frame header and E_Not_OK if there is no a frame header
  */
 extern  Std_ReturnType FDX_CreateFrameHeader(uint8_t *buffer, uint16_t seqNum);
 
