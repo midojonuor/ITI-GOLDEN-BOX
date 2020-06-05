@@ -14,11 +14,6 @@
 
 #include "FDX.h"
 
-#define CMD_SIZE_OFFSET						(16u)
-#define CMD_CODE_OFFSET						(18u)
-#define DATAEX_GROUPID_OFFSET				(20u)
-#define DATAEX_SIZE_OFFSET                  (22u)
-#define DATAEX_BYTES_OFFSET                 (24u)
 
 
 
@@ -59,8 +54,6 @@ static Std_ReturnType HeaderCheck(uint8_t *buffer)
 				{
 					errorStatus = E_NOT_OK;
 				}
-
-
 			}
 			else
 			{
@@ -145,17 +138,15 @@ Std_ReturnType FDX_ParsingFrame(uint8_t *inbuffer, uint16_t *frametype, uint16_t
  * @brief                 This Function creates the Start cmd of the frame
  * 
  * @param buffer          Holds the input Frame
- * @param seqNum          Holds the frame order 
  * @return Std_ReturnType returns E_OK if there is a start command and E_Not_OK if there is no start command
  */
-Std_ReturnType FDX_CreateStartCmd(uint8_t *buffer, uint16_t seqNum)
+Std_ReturnType FDX_CreateStartCmd(uint8_t *buffer)
 {
 	Std_ReturnType errorStatus = E_OK;
-	FXD_Start_t *pFXD_Start = (FXD_Start_t *)&buffer[CMD_SIZE_OFFSET];
+	FDX_Start_t *pFXD_Start = (FDX_Start_t *)&buffer[CMD_SIZE_OFFSET];
 
 	if(pFXD_Start != NULL)
 	{
-
 		/* Assign command code and command size */
 		pFXD_Start->CommandSize 			= (uint16_t) CMD_START_SIZE;
 		pFXD_Start->CommandCode 			= (uint16_t) Cmd_Start;
@@ -175,10 +166,9 @@ Std_ReturnType FDX_CreateStartCmd(uint8_t *buffer, uint16_t seqNum)
  * @brief                 This Function creates the Stop cmd of the frame
  * 
  * @param buffer          Holds the input Frame
- * @param seqNum          Holds the frame order 
  * @return Std_ReturnType returns E_OK if there is a stop command and E_Not_OK if there is no stop command
 */
-extern Std_ReturnType FDX_CreateStopCmd(uint8_t *buffer, uint16_t seqNum)
+extern Std_ReturnType FDX_CreateStopCmd(uint8_t *buffer)
 {
 	Std_ReturnType errorStatus = E_OK;
 	FDX_Stop_t *pFDX_Stop = (FDX_Stop_t *)&buffer[CMD_SIZE_OFFSET];
@@ -214,7 +204,7 @@ extern Std_ReturnType FDX_CreateStopCmd(uint8_t *buffer, uint16_t seqNum)
  * @param dataBytes       Holds the data
  * @return Std_ReturnType returns E_OK if there is a data exchange command and E_Not_OK if there is no data exchange command
  */
-Std_ReturnType FDX_CreateDataExchangeCmd(uint8_t  *buffer,  uint16_t seqNum, uint16_t groupID,
+Std_ReturnType FDX_CreateDataExchangeCmd(uint8_t  *buffer, uint16_t groupID,
 		                                   uint16_t dataSize, uint8_t  *dataBytes)
 
 {
@@ -284,7 +274,7 @@ Std_ReturnType FDX_CreateDataRequestCmd(uint8_t *buffer, uint16_t seqNum, uint16
  * @param timeStamp       Holds the estimated action time
  * @return Std_ReturnType returns E_OK if there is a data request command and E_Not_OK if there is no data request command
  */
-Std_ReturnType FDX_CreateStatusCmd(uint8_t *buffer, uint16_t seqNum, uint16_t status, uint64_t timeStamp)
+Std_ReturnType FDX_CreateStatusCmd(uint8_t *buffer, uint16_t status, uint64_t timeStamp)
 {
 	Std_ReturnType errorStatus = E_OK;
 	FDX_Status_t *pFDX_Status = (FDX_Status_t *)&buffer[CMD_SIZE_OFFSET];
