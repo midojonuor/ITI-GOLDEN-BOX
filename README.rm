@@ -1,6 +1,14 @@
-echo "# ITI-GOLDEN-BOX" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git remote add origin https://github.com/midojonuor/ITI-GOLDEN-BOX.git
-git push -u origin master
+Project Proposal
+Golden Box Test-Bench 
+
+Overview
+A Test-Bench system based on Raspberry Pi Microprocessor. It's an educational form of the Test-Bench made by the biggest automotive companies. The main aim is to perform a whole system that can take any test cases needed from the user while showing the final result through a GUI on the PC.
+The connection between the Raspberry Pi and the PC would be using RPC (Remote Procedure Call) on TCP (Transmission Control Protocol) network for and FDX (Fast Data exchange) protocol on UDP (User Datagram Protocol) network.
+
+Goals
+    • Build a prototype for a Test-Bench system
+    • Simulate the industrial test cases that we may face in our working environment 
+    • Getting more familiar with Linux environment
+Specifications
+The Test-Bench would provide a friendly GUI (graphical user interface) to the user where he can apply the needed test cases easily. The system allows to apply different test-cases in each peripheral in our Microprocessor.
+The system would be flexible for any future changes or extra features needed.
