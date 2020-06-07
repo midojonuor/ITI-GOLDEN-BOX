@@ -1,5 +1,5 @@
 Project Proposal
-Golden Box Test-Bench 
+GoldenBox 
 
 Overview
     GoldenBox is a test bench system based on Raspberry Pi Board. It's an educational version that applys the concepts of Test-Bench that made by the automotive companies. The main aim is to perform a whole system that can take any test cases needed from the user while showing the final result through a GUI on the PC.
