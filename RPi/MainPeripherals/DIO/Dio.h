@@ -11,7 +11,7 @@ extern  uint8_t DO_CH_SET(uint8_t digital_channel);
 
 extern  uint8_t DO_CH_RESET(uint8_t digital_channel);
 
-extern  uint8_t DI_CH_GET(uint8_t digital_channel, uint8_t *pValue);
+extern  uint8_t DIO_CH_GET(uint8_t digital_channel);
 
 
 #endif /* !_DIO_H_RPCGEN */
