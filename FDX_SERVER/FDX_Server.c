@@ -26,6 +26,9 @@
 #include "FDX.h"
 #include "FDX_Server.h"
 
+/*GPIO library*/
+#include <wiringPi.h>
+
 
 
 #define TOTAL_DIGITAL_INPUT_CHANNEL					8
@@ -35,6 +38,9 @@
 #define SEQ_NUM_INDX_STOP							1
 #define SEQ_NUM_INDX_DATA_EXCHANGE					2
 #define SEQ_NUM_INDX_STATUS							3
+
+#define IN_CHANNELS_NUM  		8u
+#define OUT_CHANNELS_NUM  		8u
 
 static UDP_Server server;
 static uint16_t Session_Status = 0;
@@ -46,6 +52,28 @@ static uint16_t Session_Status = 0;
  *
  */
 static uint16_t Sequance_Number[4];
+
+static uint8_t InputChannelTable[IN_CHANNELS_NUM] = {
+	GPIO_17,
+	GPIO_27,
+	GPIO_22,
+	GPIO_05,
+	GPIO_06,
+	GPIO_13,
+	GPIO_19,
+	GPIO_26,
+};
+
+static uint8_t OutputChannelTable[OUT_CHANNELS_NUM] = {
+	GPIO_18,
+	GPIO_23,
+	GPIO_24,
+	GPIO_25,
+	GPIO_12,
+	GPIO_16,
+	GPIO_20,
+	GPIO_21
+};
 
 
 static Std_ReturnType DataExchange_Handler(uint16_t groupId, Server_Config_t *server)
@@ -92,8 +120,8 @@ static Std_ReturnType DataExchange_Handler(uint16_t groupId, Server_Config_t *se
 
 					server->sent_msg[DATAEX_BYTES_OFFSET + indx] = server->recv_msg[DATAEX_BYTES_OFFSET + indx];
 
-					//					DigitalRead(server->sent_msg[DATAEX_SIZE_OFFSET + indx],
-					//							&server->sent_msg[DATAEX_SIZE_OFFSET + indx + 1]);
+									server->sent_msg[DATAEX_SIZE_OFFSET + indx + 1] =	
+                  digitalRead(server->sent_msg[DATAEX_SIZE_OFFSET + indx]);
 				}
 
 
@@ -147,8 +175,10 @@ static Std_ReturnType DataExchange_Handler(uint16_t groupId, Server_Config_t *se
 					}
 					server->sent_msg[DATAEX_SIZE_OFFSET + indx] = server->recv_msg[DATAEX_BYTES_OFFSET + indx];
 
-					//					DigitalWrite(server->sent_msg[DATAEX_SIZE_OFFSET + indx],
-					//							server->sent_msg[DATAEX_SIZE_OFFSET + indx + 1]);
+         
+          
+										digitalWrite(server->sent_msg[DATAEX_SIZE_OFFSET + indx],
+												server->sent_msg[DATAEX_SIZE_OFFSET + indx + 1]);
 				}
 
 
@@ -319,77 +349,22 @@ static void FdxServer_Handler(Server_Config_t *server)
 
 void FdxServer_Init(char *ip, uint16_t port)
 {
+  uint8_t indx;
 	server.Config.ip 	= (char *)ip;
 	server.Config.port 	= port;
 	server.Handler 		= FdxServer_Handler;
-
-	//	uint8_t recvBuff[MAX_LINE] = {0};
-	//	uint8_t sendBuff[MAX_LINE] = {0};
-	//
-	//	server.Config.recv_msg = recvBuff;
-	//	server.Config.sent_msg = sendBuff;
-	//
-	//	uint16_t indx = 0;
-	//
-	//	FDX_Header_t *pFDX_Header = (FDX_Header_t *) server.Config.recv_msg;
-	//
-	//
-	//	pFDX_Header->Signeture = SIGNATURE;
-	//	pFDX_Header->MajorVersion = MAJOR_VERSION;
-	//	pFDX_Header->MinorVersion = MINOR_VERSION;
-	//	pFDX_Header->NumOfCMD = 2;
-	//	pFDX_Header->SeqNum = Sequance_Number[SEQ_NUM_INDX_START];
-	//
-	//
-	//
-	//	FDX_DataExchange_t *pFDX_DataExchange = (FDX_DataExchange_t *)  &server.Config.recv_msg[CMD_SIZE_OFFSET];
-	//
-	//	pFDX_DataExchange->CommandSize = CMD_DATA_EXCHANGE_SIZE + 10;
-	//	pFDX_DataExchange->CommandCode = Cmd_DataExchange;
-	//
-	//	pFDX_DataExchange->GroupID = (DIR_APP_TO_GOLDENBOX | PERIPH_ID_DIGITAL_INPUT);
-	//
-	//	pFDX_DataExchange->DataSize = 10;
-	//
-	//	server.Config.recv_msg[CMD_SIZE_OFFSET + CMD_DATA_EXCHANGE_SIZE + 0] = 1;
-	//	server.Config.recv_msg[CMD_SIZE_OFFSET + CMD_DATA_EXCHANGE_SIZE + 1] = 1;
-	//	server.Config.recv_msg[CMD_SIZE_OFFSET + CMD_DATA_EXCHANGE_SIZE + 2] = 2;
-	//	server.Config.recv_msg[CMD_SIZE_OFFSET + CMD_DATA_EXCHANGE_SIZE + 3] = 0;
-	//	server.Config.recv_msg[CMD_SIZE_OFFSET + CMD_DATA_EXCHANGE_SIZE + 4] = 3;
-	//	server.Config.recv_msg[CMD_SIZE_OFFSET + CMD_DATA_EXCHANGE_SIZE + 5] = 0;
-	//	server.Config.recv_msg[CMD_SIZE_OFFSET + CMD_DATA_EXCHANGE_SIZE + 6] = 4;
-	//	server.Config.recv_msg[CMD_SIZE_OFFSET + CMD_DATA_EXCHANGE_SIZE + 7] = 0;
-	//	server.Config.recv_msg[CMD_SIZE_OFFSET + CMD_DATA_EXCHANGE_SIZE + 8] = 5;
-	//	server.Config.recv_msg[CMD_SIZE_OFFSET + CMD_DATA_EXCHANGE_SIZE + 9] = 1;
-	//
-	//	Session_Status = SESSION_OPEN;
-	//
-	//	printf("Start of Request frame : \n");
-	//	fflush(stdout);
-	//
-	//	for(indx = 0; indx < 40; ++indx)
-	//	{
-	//		printf("0x%X\n", server.Config.recv_msg[indx]);
-	//	}
-	//	printf("end of Request frame\n");
-	//	fflush(stdout);
-
-	//
-	//	/* Code to be tested */
-	//	FdxServer_Handler(&server.Config);
-
-
-
-	//	printf("Start of respond frame : \n");
-	//	fflush(stdout);
-	//
-	//	for(indx = 0; indx < 40; ++indx)
-	//	{
-	//		printf("0x%X\n", server.Config.sent_msg[indx]);
-	//	}
-	//	printf("end of respond frame\n");
-	//	fflush(stdout);
-
+  
+  /*using BCM numbering*/
+  wiringPiSetupGpio();
+  
+  for(indx = 0; indx < IN_CHANNELS_NUM ; ++indx)
+  {
+  pinMode(InputChannelTable[indx],INPUT);
+  pinMode(OutputChannelTable[indx],OUTPUT);
+  }
+  
+  
+	
 }
 
 
