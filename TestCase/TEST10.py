@@ -1,20 +1,16 @@
 import GoldenBox 
-import GoldenBox_prephiral 
 
+GB = GoldenBox.client("192.168.1.55",5000)
 
-
-
-
-GB = GoldenBox.client("localhost",800)
+#print(GB.GBclient.system.listMethods())
 
 DO = GoldenBox.Digital_output(GB)
 
 DI = GoldenBox.Digital_input(GB)
 
+DO.Case(GoldenBox.CH_01,GoldenBox.HIGH)
 
-DO.Case(GoldenBox_prephiral.Digital_Output[GoldenBox_prephiral.CH_01],GoldenBox_prephiral.LOW)
-
-DI.Assert(GoldenBox_prephiral.Digital_Input[GoldenBox_prephiral.CH_01],GoldenBox_prephiral.LOW)
+DI.Assert(GoldenBox.CH_01,GoldenBox.HIGH)
 
 
 

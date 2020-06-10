@@ -1,8 +1,19 @@
 import sys
 import xmlrpc.client
 
-from XMLRPCserver import *
+#from XMLRPCserver import *
 
+HIGH = 1
+LOW = 0
+
+CH_01 = 0
+CH_02 = 1
+CH_03 = 2
+CH_04 = 3
+CH_05 = 4
+CH_06 = 5
+CH_07 = 6
+CH_08 = 7
 
 
 class client:
@@ -21,7 +32,9 @@ class Digital_input:
 
         
   def Assert(self, channel_number, value): 
-    if ( value == self.GBclient.DIO_CH_GET(channel_number) ):
+    ActualValue = self.GBclient.DI_CH_GET(channel_number)
+    print(ActualValue)
+    if ( ActualValue == value ):
       print("This Test case passed successufuly")
     else : 
       print("This Test Case Failed")
@@ -44,7 +57,7 @@ class Digital_output:
     
     
   def Assert(self, channel_number, value): 
-    if ( value == self.GBclient.DIO_CH_GET(channel_number) ):
+    if ( value == self.GBclient.DO_CH_GET(channel_number) ):
       print("This Test case passed successufuly")
     else : 
       print("This Test Case Failed")
