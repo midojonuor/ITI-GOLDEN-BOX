@@ -16,6 +16,7 @@ int main(void)
 {
 	u8 Result;
 	u8 AnalogVal;
+	u8 Ch;
 	PORTInitialize();
 
 	/* Set Pull up resistor for SS */
@@ -33,9 +34,10 @@ int main(void)
 
 	while (1)
 	{
-		Result = ADC_read(0);   //save adc read value in integer
+		Ch=SPI_u8SendDataByteSynch(Result);
+		Result = ADC_read(Ch);   //save adc read value in integer
 		//AnalogVal = (Result * 5000UL)/1024;
-		SPI_u8SendDataByteSynch(Result);
+		
 	}
 }
 

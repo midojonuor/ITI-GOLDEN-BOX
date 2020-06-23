@@ -87,7 +87,20 @@ u8   SPI_u8SendDataByteSynch(u8 Copy_u8TransmittedByte)
 {
 	u8  Local_u8ReturnState       = STD_TYPES_u8_ERROR_OK;
 	u16 Local_u16TimeOutCounter   = 0;
+	u8 Local_ChannelNum=0;
 
+   /*------Startt Read -------*/	
+	Local_ChannelNum = SPDR;
+	/* wait until Transmission is completed */
+	while( (GET_BIT(SPSR,SPSR_SPIF) == 0) && (Local_u16TimeOutCounter < SPI_u16_TIMEOUT) )
+	{
+		Local_u16TimeOutCounter++;
+	}
+	if (Local_u16TimeOutCounter >= SPI_u16_TIMEOUT)
+	{
+		Local_u8ReturnState = STD_TYPES_u8_ERROR_NOK;
+	}
+/*------Startt Send-------*/	
 	SPDR = Copy_u8TransmittedByte;
 	/* Check Collision flag */
 	if( GET_BIT(SPSR,SPSR_WCOL) == 1)
@@ -105,7 +118,7 @@ u8   SPI_u8SendDataByteSynch(u8 Copy_u8TransmittedByte)
 		Local_u8ReturnState = STD_TYPES_u8_ERROR_NOK;
 	}
 
-	return Local_u8ReturnState;
+	return Local_ChannelNum;
 }
 
 u8   SPI_u8RecieveDataByteSynch(u8 * Copy_pu8RecievedByte)
