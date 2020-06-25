@@ -38,7 +38,8 @@ void ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
 	uint8_t recData = 0xAA;			// CMD to get all channels value
 
 	wiringPiSPIDataRW(0, &recData, 1);
-	
+	delay(1);
+
 	if(recData == 0xAA)
 	{
 		wiringPiSPIDataRW(0, pData_arr, data_size);
