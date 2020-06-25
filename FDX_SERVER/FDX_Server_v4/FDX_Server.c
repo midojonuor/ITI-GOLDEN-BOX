@@ -125,13 +125,14 @@ void    ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
 	uint8_t recData = 0xAA;			// CMD to get all channels value
 
 	wiringPiSPIDataRW(0, &recData, 1);
-	delay(5);
 
-	if(recData == 0xAA)
+	delay(1);
+
+	if(recData == 0xBB)
 	{
-		for ( int i =0 ; i < data_size ; i++)
+		for (indx = 0; indx < data_size ; indx++)
 		{
-			wiringPiSPIDataRW(0, (pData_arr+i), 1);
+			wiringPiSPIDataRW(0, (pData_arr + indx), 1);
 		}
 	}
 }
@@ -623,6 +624,7 @@ void FdxServer_Init(char *ip, uint16_t port)
 {
 #if RPI_HOST
 	uint8_t indx;
+	int SPI_fd = 0;
 #endif
 
 	server.Config.ip 	= (char *)ip;
@@ -633,7 +635,7 @@ void FdxServer_Init(char *ip, uint16_t port)
 	/*using BCM numbering*/
 	wiringPiSetup();
 
-	wiringPiSPISetupMode(0, SPI_SPEED, SPI_MODE);
+	SPI_fd = wiringPiSPISetupMode(0, SPI_SPEED, SPI_MODE);
 
 	for(indx = 0; indx < IN_CHANNELS_NUM ; ++indx)
 	{

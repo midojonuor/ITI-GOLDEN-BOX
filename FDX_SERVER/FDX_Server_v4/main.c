@@ -16,7 +16,7 @@
 int
 main()
 {
-	FdxServer_Init("192.168.1.55", 5000);
+	FdxServer_Init("192.168.1.55", 22);
 	FdxServer_StartForever();
 	return 0;
 }
