@@ -124,6 +124,11 @@ void    ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
 	uint32_t indx = 0;
 	uint8_t recData = 0xAA;			// CMD to get all channels value
 
+#if DEBUG_START
+	uint32_t indxDebug = 0;
+#endif
+
+
 	wiringPiSPIDataRW(0, &recData, 1);
 
 	delay(1);
@@ -134,6 +139,15 @@ void    ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
 		{
 			wiringPiSPIDataRW(0, (pData_arr + indx), 1);
 		}
+
+#if DEBUG_START
+		for (indx = 0; indx < data_size ; indx++)
+		{
+			printf("Channel Number %d = %d\n", indx, ADCChannelTable[indx]);
+			fflush(stdout);
+		}
+#endif
+
 	}
 }
 #endif
@@ -305,8 +319,12 @@ static Std_ReturnType DataExchange_Handler(uint16_t groupId, Server_Config_t *se
 #endif
 
 #if DEBUG_START
-					printf("ADC Channel number = %d\n", server->recv_msg[DATAEX_BYTES_OFFSET + indx]);
-					printf("ADC Channel value  = %d\n", server->recv_msg[DATAEX_BYTES_OFFSET + indx + 1]);
+
+					for (indxDebug = 0; indxDebug < ADC_NUM_OF_CHANNLES ; ++indxDebug)
+					{
+						printf("Channel Number %d = %d\n", indxDebug, ADCChannelTable[indxDebug]);
+						fflush(stdout);
+					}
 #endif
 
 				}
