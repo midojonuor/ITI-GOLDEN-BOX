@@ -3,23 +3,39 @@
 
 #include "wiringPiSPI.h"
 
+#define NUM_OF_CHANNELS			8
+
+uint8_t ADC_DataArr[NUM_OF_CHANNELS];
 int main (void)
 {
-	//char ReceivedByte[10] = {1};
-	char ReceivedByte;
 	int SPI_fd;
-	//SPI_fd = wiringPiSPISetup(0,);
-	SPI_fd=wiringPiSPISetupMode(0,500000,1);
-	//printf("%d\n",SPI_fd);
+	SPI_fd = wiringPiSPISetupMode(0,500000,1);
+	uint32_t iterator = 0;
+
 	while(1)
 	{
-		wiringPiSPIDataRW(0,&ReceivedByte,1);
-		//for (int i=0; i<10 ; i++)
-		//{
-	//	fflush(stdout);
-			printf("%d\n",ReceivedByte);
-			delay(1000);
-		//}
-		
+		ADC_AllChannelsRead(ADC_DataArr, NUM_OF_CHANNELS);
+
+		for(iterator = 0; iterator < NUM_OF_CHANNELS; ++iterator)
+		{
+			printf("Channel Number %d = %d", iterator, ADC_DataArr[iterator]);
+		}
+		delay(1000);
+	}
+}
+
+
+
+
+void ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
+{
+	uint32_t indx = 0;
+	uint8_t recData = 0xAA;			// CMD to get all channels value
+
+	wiringPiSPIDataRW(0, &recData, 1);
+	
+	if(recData == 0xAA)
+	{
+		wiringPiSPIDataRW(0, pData_arr, data_size);
 	}
 }
