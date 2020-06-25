@@ -108,15 +108,15 @@ static uint8_t OutputChannelTable[OUT_CHANNELS_NUM] = {
 		GPIO_21
 };
 
-static uint8_t PWM_InputChannelTable[PWM_INChannels_NUM] = {
+static uint8_t PWM_InputChannelTable[PWM_IN_Channels_NUM] = {
 
 };
 
-static uint8_t PWM_OutputChannelTable[PWM_OUTChannels_NUM] = {
+static uint8_t PWM_OutputChannelTable[PWM_OUT_Channels_NUM] = {
 
 };
 
-static uint8_t ADCChannelTable[ADC_CHANNEL_NUM] = {0};
+static uint8_t ADCChannelTable[ADC_NUM_OF_CHANNLES] = {0};
 
 
 void    ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
@@ -633,12 +633,12 @@ void FdxServer_Init(char *ip, uint16_t port)
 	/*using BCM numbering*/
 	wiringPiSetup();
 
-	wiringPiSPISetupMode(0, speed, mode);
+	wiringPiSPISetupMode(0, SPI_SPEED, SPI_MODE);
 
 	for(indx = 0; indx < IN_CHANNELS_NUM ; ++indx)
 	{
-		pinMode(InputChannelTable[indx],INPUT);
-		pinMode(OutputChannelTable[indx],OUTPUT);
+		pinMode(InputChannelTable[indx], INPUT);
+		pinMode(OutputChannelTable[indx], OUTPUT);
 	}
 #endif
 

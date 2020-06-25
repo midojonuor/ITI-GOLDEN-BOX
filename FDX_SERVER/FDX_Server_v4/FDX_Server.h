@@ -10,9 +10,11 @@
 
 
 
-#define RPI_HOST				0
+#define RPI_HOST				1
 #define DEBUG_START				1
 
+#define SPI_SPEED				500000UL
+#define SPI_MODE				1
 
 extern void FdxServer_Init(char * ip, uint16_t port);
 
