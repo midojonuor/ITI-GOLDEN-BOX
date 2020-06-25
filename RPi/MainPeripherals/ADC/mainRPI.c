@@ -1,11 +1,14 @@
 #include <stdio.h>
+#include <stdint.h>
 #include "wiringPi.h"
 
 #include "wiringPiSPI.h"
 
 #define NUM_OF_CHANNELS			8
 
-uint8_t ADC_DataArr[NUM_OF_CHANNELS];
+uint8_t ADC_DataArr[NUM_OF_CHANNELS] = {0};
+void ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size);
+
 int main (void)
 {
 	int SPI_fd;
@@ -18,7 +21,9 @@ int main (void)
 
 		for(iterator = 0; iterator < NUM_OF_CHANNELS; ++iterator)
 		{
-			printf("Channel Number %d = %d", iterator, ADC_DataArr[iterator]);
+			
+		printf("Channel Number %d = %d\n", iterator, ADC_DataArr[iterator]);
+		printf(".............................................\n");
 		}
 		delay(1000);
 	}

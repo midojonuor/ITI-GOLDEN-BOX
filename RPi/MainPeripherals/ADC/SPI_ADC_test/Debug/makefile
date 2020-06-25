@@ -73,7 +73,7 @@ sizedummy: SPI_ADC_test.elf
 
 avrdudedummy: SPI_ADC_test.elf
 	@echo 'Invoking: AVRDude'
-	E:\ITI\Assaf\SDK\IMT_SDK_Win_64\WinAVR\bin\avrdude -pm32 -cusbasp -Uflash:w:SPI_ADC_test.hex:a
+	D:\Porgram\Tools\SDK\AVR\IMT_SDK_Win_64\IMT_SDK_Win_64\WinAVR\bin\avrdude -pm32 -cusbasp -Uflash:w:SPI_ADC_test.hex:a
 	@echo 'Finished building: $@'
 	@echo ' '
 

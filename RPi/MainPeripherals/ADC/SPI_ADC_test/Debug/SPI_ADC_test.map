@@ -1,8 +1,8 @@
 Archive member included because of file (symbol)
 
-e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
-                              e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o (exit)
-e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+                              d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o (exit)
+d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
                               ./SPI_program.o (__do_clear_bss)
 
 Memory Configuration
@@ -18,15 +18,15 @@ signature        0x00840000         0x00000400         rw !x
 
 Linker script and memory map
 
-LOAD e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
+LOAD d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
 LOAD ./ADC_program.o
 LOAD ./DIO_program.o
 LOAD ./PORT_program.o
 LOAD ./SPI_program.o
 LOAD ./main.o
-LOAD e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
-LOAD e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a
-LOAD e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
+LOAD d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
+LOAD d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a
+LOAD d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
 
 .hash
  *(.hash)
@@ -118,9 +118,9 @@ LOAD e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x852
+.text           0x00000000      0x896
  *(.vectors)
- .vectors       0x00000000       0x54 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
+ .vectors       0x00000000       0x54 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
                 0x00000000                __vectors
                 0x00000000                __vector_default
  *(.vectors)
@@ -145,18 +145,18 @@ LOAD e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc
  SORT(*)(.ctors)
  SORT(*)(.dtors)
  *(.init0)
- .init0         0x00000054        0x0 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
+ .init0         0x00000054        0x0 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
                 0x00000054                __init
  *(.init0)
  *(.init1)
  *(.init1)
  *(.init2)
- .init2         0x00000054        0xc e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
+ .init2         0x00000054        0xc d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
  *(.init2)
  *(.init3)
  *(.init3)
  *(.init4)
- .init4         0x00000060       0x10 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+ .init4         0x00000060       0x10 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
                 0x00000060                __do_clear_bss
  *(.init4)
  *(.init5)
@@ -168,10 +168,10 @@ LOAD e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc
  *(.init8)
  *(.init8)
  *(.init9)
- .init9         0x00000070        0x8 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
+ .init9         0x00000070        0x8 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
  *(.init9)
  *(.text)
- .text          0x00000078        0x4 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
+ .text          0x00000078        0x4 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
                 0x00000078                __vector_1
                 0x00000078                __bad_interrupt
                 0x00000078                __vector_6
@@ -197,8 +197,8 @@ LOAD e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc
  .text          0x0000007c        0x0 ./PORT_program.o
  .text          0x0000007c        0x0 ./SPI_program.o
  .text          0x0000007c        0x0 ./main.o
- .text          0x0000007c        0x0 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
- .text          0x0000007c        0x0 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+ .text          0x0000007c        0x0 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .text          0x0000007c        0x0 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
                 0x0000007c                . = ALIGN (0x2)
  *(.text.*)
  .text.ADC_voidInit
@@ -220,32 +220,32 @@ LOAD e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc
                 0x0000043e       0x54 ./SPI_program.o
                 0x0000043e                SPI_voidInit
  .text.SPI_u8SendDataByteSynch
-                0x00000492       0x7c ./SPI_program.o
+                0x00000492       0xbc ./SPI_program.o
                 0x00000492                SPI_u8SendDataByteSynch
  .text.SPI_u8RecieveDataByteSynch
-                0x0000050e       0x76 ./SPI_program.o
-                0x0000050e                SPI_u8RecieveDataByteSynch
+                0x0000054e       0x76 ./SPI_program.o
+                0x0000054e                SPI_u8RecieveDataByteSynch
  .text.SPI_u8SendRecieveByteSynch
-                0x00000584       0xa2 ./SPI_program.o
-                0x00000584                SPI_u8SendRecieveByteSynch
+                0x000005c4       0xa2 ./SPI_program.o
+                0x000005c4                SPI_u8SendRecieveByteSynch
  .text.SPI_u8SendRecieveBufferAsynch
-                0x00000626       0xba ./SPI_program.o
-                0x00000626                SPI_u8SendRecieveBufferAsynch
+                0x00000666       0xba ./SPI_program.o
+                0x00000666                SPI_u8SendRecieveBufferAsynch
  .text.__vector_12
-                0x000006e0       0xc4 ./SPI_program.o
-                0x000006e0                __vector_12
- .text.main     0x000007a4       0x52 ./main.o
-                0x000007a4                main
+                0x00000720       0xc4 ./SPI_program.o
+                0x00000720                __vector_12
+ .text.main     0x000007e4       0x56 ./main.o
+                0x000007e4                main
  .text.ADC_read
-                0x000007f6       0x58 ./main.o
-                0x000007f6                ADC_read
- .text.libgcc   0x0000084e        0x0 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
- .text.libgcc   0x0000084e        0x0 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
-                0x0000084e                . = ALIGN (0x2)
+                0x0000083a       0x58 ./main.o
+                0x0000083a                ADC_read
+ .text.libgcc   0x00000892        0x0 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .text.libgcc   0x00000892        0x0 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+                0x00000892                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x0000084e        0x0 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
-                0x0000084e                exit
-                0x0000084e                _exit
+ .fini9         0x00000892        0x0 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+                0x00000892                exit
+                0x00000892                _exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -264,21 +264,21 @@ LOAD e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x0000084e        0x4 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .fini0         0x00000892        0x4 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000852                _etext = .
+                0x00000896                _etext = .
 
-.data           0x00800060        0x0 load address 0x00000852
+.data           0x00800060        0x0 load address 0x00000896
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
- .data          0x00800060        0x0 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
+ .data          0x00800060        0x0 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
  .data          0x00800060        0x0 ./ADC_program.o
  .data          0x00800060        0x0 ./DIO_program.o
  .data          0x00800060        0x0 ./PORT_program.o
  .data          0x00800060        0x0 ./SPI_program.o
  .data          0x00800060        0x0 ./main.o
- .data          0x00800060        0x0 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
- .data          0x00800060        0x0 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+ .data          0x00800060        0x0 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .data          0x00800060        0x0 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
  *(.data*)
  *(.rodata)
  *(.rodata*)
@@ -290,14 +290,14 @@ LOAD e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc
 .bss            0x00800060        0x9
                 0x00800060                PROVIDE (__bss_start, .)
  *(.bss)
- .bss           0x00800060        0x0 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
+ .bss           0x00800060        0x0 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
  .bss           0x00800060        0x0 ./ADC_program.o
  .bss           0x00800060        0x0 ./DIO_program.o
  .bss           0x00800060        0x0 ./PORT_program.o
  .bss           0x00800060        0x0 ./SPI_program.o
  .bss           0x00800060        0x0 ./main.o
- .bss           0x00800060        0x0 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
- .bss           0x00800060        0x0 e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+ .bss           0x00800060        0x0 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .bss           0x00800060        0x0 d:/porgram/tools/sdk/avr/imt_sdk_win_64/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
  *(.bss*)
  .bss.SPI_pu8TransmittedBuffer
                 0x00800060        0x2 ./SPI_program.o
@@ -313,8 +313,8 @@ LOAD e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc
                 0x00800068        0x1 ./SPI_program.o
  *(COMMON)
                 0x00800069                PROVIDE (__bss_end, .)
-                0x00000852                __data_load_start = LOADADDR (.data)
-                0x00000852                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x00000896                __data_load_start = LOADADDR (.data)
+                0x00000896                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x00800069        0x0
                 0x00800069                PROVIDE (__noinit_start, .)
@@ -339,21 +339,21 @@ LOAD e:/iti/assaf/sdk/imt_sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc
 .signature
  *(.signature*)
 
-.stab           0x00000000      0xfc0
+.stab           0x00000000     0x1020
  *(.stab)
  .stab          0x00000000      0x258 ./ADC_program.o
  .stab          0x00000258      0x270 ./DIO_program.o
                                 0x2f4 (size before relaxing)
  .stab          0x000004c8      0x138 ./PORT_program.o
                                 0x1bc (size before relaxing)
- .stab          0x00000600      0x5c4 ./SPI_program.o
-                                0x648 (size before relaxing)
- .stab          0x00000bc4      0x3fc ./main.o
-                                0x480 (size before relaxing)
+ .stab          0x00000600      0x618 ./SPI_program.o
+                                0x69c (size before relaxing)
+ .stab          0x00000c18      0x408 ./main.o
+                                0x48c (size before relaxing)
 
-.stabstr        0x00000000      0xc1c
+.stabstr        0x00000000      0xcaf
  *(.stabstr)
- .stabstr       0x00000000      0xc1c ./ADC_program.o
+ .stabstr       0x00000000      0xcaf ./ADC_program.o
 
 .stab.excl
  *(.stab.excl)
