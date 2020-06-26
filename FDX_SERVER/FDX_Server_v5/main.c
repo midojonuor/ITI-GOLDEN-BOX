@@ -17,6 +17,12 @@ int
 main()
 {
 	FdxServer_Init("192.168.1.55", 22);
+
+#if DEBUG_START
+	printf("########################################################\n");
+	printf("start of new connection\n");
+	printf("########################################################\n");
+#endif
 	FdxServer_StartForever();
 	return 0;
 }

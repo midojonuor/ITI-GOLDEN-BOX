@@ -129,7 +129,7 @@ static uint8_t OutputChannelTable[OUT_CHANNELS_NUM] = {
 };
 
 /* wiringPi numbering */
-static uint8_t PWM_InputChannelTable[PWM_IN_NUM_OF_CHANNELS] = {11, 31};
+static uint8_t PWM_InputChannelTable[PWM_IN_NUM_OF_CHANNELS] = {26, 28};
 
 /* wiringPi numbering */
 static uint8_t PWM_OutputChannelTable[PWM_OUT_NUM_OF_CHANNELS] = {1, 26};
