@@ -119,7 +119,7 @@ static uint8_t PWM_OutputChannelTable[PWM_OUT_Channels_NUM] = {
 static uint8_t ADCChannelTable[ADC_NUM_OF_CHANNLES] = {0};
 
 
-void    ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
+static void ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
 {
 	uint32_t indx = 0;
 	uint8_t recData = 0xAA;			// CMD to get all channels value
@@ -133,6 +133,7 @@ void    ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
 		for (indx = 0; indx < data_size; indx++)
 		{
 			wiringPiSPIDataRW(0, (pData_arr + indx), 1);
+			delay(1);
 		}
 
 #if DEBUG_START
