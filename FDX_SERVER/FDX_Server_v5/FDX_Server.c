@@ -295,7 +295,7 @@ static Std_ReturnType DataExchange_Handler(uint16_t groupId, Server_Config_t *se
 					server->sent_msg[DATAEX_BYTES_OFFSET + indx] = server->recv_msg[DATAEX_BYTES_OFFSET + indx];
 
 #if RPI_HOST
-					server->sent_msg[DATAEX_SIZE_OFFSET + indx + 1] =
+					server->sent_msg[DATAEX_BYTES_OFFSET + indx + 1] =
 							digitalRead(InputChannelTable[server->recv_msg[DATAEX_BYTES_OFFSET + indx]]);
 #endif
 				}
@@ -349,7 +349,7 @@ static Std_ReturnType DataExchange_Handler(uint16_t groupId, Server_Config_t *se
 						ApiStatus = E_NOT_OK;
 						break;
 					}
-					server->sent_msg[DATAEX_SIZE_OFFSET + indx] = server->recv_msg[DATAEX_BYTES_OFFSET + indx];
+					server->sent_msg[DATAEX_BYTES_OFFSET + indx] = server->recv_msg[DATAEX_BYTES_OFFSET + indx];
 
 #if DEBUG_START
 					printf("Digital Output Channel number = %d\n", server->recv_msg[DATAEX_BYTES_OFFSET + indx]);
