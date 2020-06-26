@@ -1,1 +1,2 @@
 -> Fix shiftting bug of Digital I/O that appeared in version 4
+-> Fix PWM channels number
