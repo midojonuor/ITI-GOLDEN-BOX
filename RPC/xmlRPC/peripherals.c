@@ -239,8 +239,12 @@ void ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
 {
 	uint32_t indx = 0;
 	uint8_t recData = CMD_SPI_ADC_REQUEST;			// CMD to get all channels value
+	int SPI_fd;
+
 
 #if RPI_HOST
+	SPI_fd = wiringPiSPISetupMode(0, speed, mode);
+
 	wiringPiSPIDataRW(0, &recData, 1);
 	delay(1);
 

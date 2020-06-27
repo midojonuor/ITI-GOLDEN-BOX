@@ -253,7 +253,7 @@ static xmlrpc_value *adc_read_channel(xmlrpc_env      *const envP,
 
     for(indx = 0; indx < 8; ++indx)
     {
-        printf("Channel %d = %d", indx, adc_channels_value[indx]);
+        printf("Channel %d = %d\n", indx, adc_channels_value[indx]);
     }
 #endif
 
@@ -288,7 +288,7 @@ main(int const argc, const char **argv)
         &digital_Out_get
     };
 
-    struct xmlrpc_method_info3 const GoldenbOXInitMethodInfo = {
+    struct xmlrpc_method_info3 const GoldenboxInitMethodInfo = {
         "Goldenbox_Init",
         &goldenbox_init
     };
@@ -323,7 +323,7 @@ main(int const argc, const char **argv)
     xmlrpc_registry_add_method3(&env, registeryP, &DigitalSetMethondInfo);
     xmlrpc_registry_add_method3(&env, registeryP, &DigitalResetMethondInfo);
 
-    xmlrpc_registry_add_method3(&env, registeryP, &GoldenbOXInitMethodInfo);
+    xmlrpc_registry_add_method3(&env, registeryP, &GoldenboxInitMethodInfo);
     xmlrpc_registry_add_method3(&env, registeryP, &PWM_WriteMethodInfo);
     xmlrpc_registry_add_method3(&env, registeryP, &ADC_ReadMethodInfo);
     
