@@ -147,7 +147,7 @@ static xmlrpc_value *digital_Out_get(xmlrpc_env      *const envP,
 #endif
 
 #if RPI_HOST
-    result = DIO_CH_GET(channelNumber);
+    result = DO_CH_GET(channelNumber);
 #endif    
     
     /* return the results */
@@ -248,7 +248,7 @@ static xmlrpc_value *adc_read_channel(xmlrpc_env      *const envP,
 
 #if RPI_HOST
     ADC_AllChannelsRead(adc_channels_value, 8);
-    result = ADC_AllChannelsRead[channel_num];
+    result = adc_channels_value[channel_num];
 #endif
 
     /* return the results */
