@@ -254,10 +254,11 @@ void ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
 
 	if(recData == CMD_SPI_ADC_REPLAY)
 	{
-		for (indx = 0 ; indx < data_size ; indx++)
-		{
-			wiringPiSPIDataRW(0, (pData_arr + indx), 1);
-		}
+		wiringPiSPIDataRW(0, pData_arr, 8);
+		// for (indx = 0 ; indx < data_size ; indx++)
+		// {
+		// 	wiringPiSPIDataRW(0, (pData_arr + indx), 1);
+		// }
 	}
 #endif
 }	
