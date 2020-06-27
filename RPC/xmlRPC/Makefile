@@ -133,7 +133,7 @@ $(SERVERPROGS_CGI):%.cgi:%_cgi.o
 #$(CCLD) -o $@ $^ $(LIBS_SERVER_ABYSS) -l wiringPi $(OBJ_FILE) $(LDFLAGS_ALL)
 
 $(SERVERPROGS_ABYSS):%:%.o
-	$(CCLD) -o $@ $^ $(LIBS_SERVER_ABYSS) $(OBJ_FILE) $(LDFLAGS_ALL)
+	$(CCLD) -o $@ $^ $(LIBS_SERVER_ABYSS) -l wiringPi $(OBJ_FILE) $(LDFLAGS_ALL)
 
   
 	

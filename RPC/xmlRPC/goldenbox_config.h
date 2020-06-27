@@ -2,9 +2,9 @@
 #define _GOLDENBOX_CONFIG_H_
 
 
-#define HIL_SERVER_PORT        5000
+#define HIL_SERVER_PORT        25
 
-#define RPI_HOST        0
+#define RPI_HOST        1
 #define DEBUG           1
 
 
