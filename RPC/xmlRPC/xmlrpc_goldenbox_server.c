@@ -37,6 +37,9 @@
 
 #define PORT_NUMBER                     HIL_SERVER_PORT
 
+#if RPI_HOST
+volatile uint8_t adc_channels_value[8] = {0};
+#endif
 
 static xmlrpc_value *digital_output_set(xmlrpc_env      *const envP,
                                         xmlrpc_value    *const paramArrayP,
@@ -231,7 +234,6 @@ static xmlrpc_value *adc_read_channel(xmlrpc_env      *const envP,
     xmlrpc_int32 channel_num = 0;
     xmlrpc_int32 result = 0;
 
-    uint8_t adc_channels_value[8] = {0};
     uint8_t indx = 0;
 
     /* Parsing arguments */
