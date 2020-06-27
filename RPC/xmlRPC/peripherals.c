@@ -189,7 +189,7 @@ void DIO_Init(void)
 	/* using WiringPi numbering */ 
 	wiringPiSetup();
 	
-	for(indx = 0; indx < IN_CHANNELS_NUM ; ++indx)
+	for(indx = 0; indx < Digital_IN_CHANNELS_NUM ; ++indx)
 	{
 		pinMode(DigitalInputChannelTable[indx],INPUT);
 		pullUpDnControl (DigitalInputChannelTable[indx],PUD_DOWN);
@@ -272,7 +272,7 @@ void PWM_Init(uint32_t pwm_freq)
 
 #if RPI_HOST
 	/* Initialize pwm channels */
-	for(indx = 0; indx < DIGITAL_PWM_OUT_CHANNELS_NUM; ++indx)
+	for(indx = 0; indx < PWM_OUT_CHANNELS_NUM; ++indx)
 	{
 		pinMode(PWMOutputChannelTable[indx], PWM_OUTPUT);
 	}
