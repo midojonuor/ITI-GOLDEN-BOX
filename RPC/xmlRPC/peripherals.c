@@ -249,16 +249,14 @@ void ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
 
 
 #if RPI_HOST
-	SPI_fd = wiringPiSPISetupMode(0, SPI_Speed, SPI_Mode);
-
 	wiringPiSPIDataRW(0, &recData, 1);
 	delay(1);
 
 	if(recData == CMD_SPI_ADC_REPLAY)
 	{
-		for ( int i = 0 ; i < data_size ; i++)
+		for (indx = 0 ; indx < data_size ; indx++)
 		{
-			wiringPiSPIDataRW(0, (pData_arr+i),1);
+			wiringPiSPIDataRW(0, (pData_arr + indx), 1);
 		}
 	}
 #endif
