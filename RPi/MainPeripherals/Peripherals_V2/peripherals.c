@@ -1,9 +1,8 @@
 /*
- * Dio.h
+ * 	peripherals.c
  *
  *  Created on: June 2, 2020
- *      Author: Amira Zaher
- *      Microcontroller: Raspberry Pi 3 B+
+ *      Author: Mido
  */
 
 #include "stdint.h"
@@ -13,7 +12,6 @@
 #include "wiringPiSPI.h"
 
 #include "peripherals.h"
-
 
 #define GPIO_17   0U
 #define GPIO_27   2U
@@ -34,15 +32,23 @@
 #define GPIO_21   29U
 
 
-#define HIGH				1
-#define LOW					0
+#define HIGH						1
+#define LOW							0
 
 
-#define IN_CHANNELS_NUM  		8u
-#define OUT_CHANNELS_NUM  		8u
+#define DIGITAL_IN_CHANNELS_NUM  				8u
+#define DIGITAL_OUT_CHANNELS_NUM  				8u
+
+#define DIGITAL_PWM_IN_CHANNELS_NUM				2u
+#define DIGITAL_PWM_OUT_CHANNELS_NUM			2u
 
 
-static uint8_t InputChannelTable[IN_CHANNELS_NUM] = {
+#define CMD_SPI_ADC_REQUEST						0xAA
+#define CMD_SPI_ADC_REPLAY						0xBB
+
+#define PWM_MAX_FREQ							19200000u
+
+static uint8_t DigitalInputChannelTable[IN_CHANNELS_NUM] = {
 	GPIO_17,
 	GPIO_27,
 	GPIO_22,
@@ -53,7 +59,7 @@ static uint8_t InputChannelTable[IN_CHANNELS_NUM] = {
 	GPIO_26,
 };
 
-static uint8_t OutputChannelTable[OUT_CHANNELS_NUM] = {
+static uint8_t DigitalOutputChannelTable[OUT_CHANNELS_NUM] = {
 	GPIO_18,
 	GPIO_23,
 	GPIO_24,
@@ -64,6 +70,15 @@ static uint8_t OutputChannelTable[OUT_CHANNELS_NUM] = {
 	GPIO_21
 };
 
+static uint8_t PWMOutputChannelTable[DIGITAL_PWM_OUT_CHANNELS_NUM] = {
+	1,
+	26
+};
+
+static uint8_t PWMInputChannelTable[DIGITAL_PWM_OUT_CHANNELS_NUM] = {
+	11,
+	31
+};
 
 
 /*
@@ -80,7 +95,7 @@ static uint8_t OutputChannelTable[OUT_CHANNELS_NUM] = {
 uint8_t DO_CH_SET(uint8_t digital_channel)
 {
 	//printf("Digital output channel %d set to high\n", digital_channel);
-	digitalWrite(OutputChannelTable[digital_channel], HIGH);
+	digitalWrite(DigitalOutputChannelTable[digital_channel], HIGH);
 	return HIGH;
 }
 
@@ -98,69 +113,193 @@ uint8_t DO_CH_SET(uint8_t digital_channel)
 uint8_t DO_CH_RESET(uint8_t digital_channel)
 {
 	//printf("Digital output channel %d set to low\n", digital_channel);
-	digitalWrite(OutputChannelTable[digital_channel], LOW);
+	digitalWrite(DigitalOutputChannelTable[digital_channel], LOW);
 	return LOW;
 }
 
 /*
  * Description:
- * 		This function shall read given channel
+ * 		This function shall read given input channel
  *
  * Parameters:
  * 		- digital_channel
- * 		- pValue *
+ * 		- Value 
  *
  * Return:
  * 		Channel state
  */
 uint8_t DI_CH_GET(uint8_t digital_channel)
 {
-	return digitalRead(InputChannelTable[digital_channel]);
+	return digitalRead(DigitalInputChannelTable[digital_channel]);
 }
 
+
+/*
+ * Description:
+ * 		This function shall read given output channel
+ *
+ * Parameters:
+ * 		- digital_channel
+ * 		- Value 
+ *
+ * Return:
+ * 		Channel state
+ */
 uint8_t DO_CH_GET(uint8_t digital_channel)
 {
-	return digitalRead(OutputChannelTable[digital_channel]);
+	return digitalRead(DigitalOutputChannelTable[digital_channel]);
 }
 
+
+/*
+ * Description:
+ * 		This function shall initialize all digital I/O channels
+ *
+ * Parameters:
+ * 		- digital_channel
+ * 		- pValue *
+ *
+ * Return:
+ * 		- none
+ */
 void DIO_Init(void)
 {
 	int indx;
-	/*using WiringPi numbering*/
+	/* using WiringPi numbering */ 
 	wiringPiSetup();
 	
 	for(indx = 0; indx < IN_CHANNELS_NUM ; ++indx)
 	{
-		pinMode(InputChannelTable[indx],INPUT);
-		pullUpDnControl (InputChannelTable[indx],PUD_DOWN);
-		pinMode(OutputChannelTable[indx],OUTPUT);
+		pinMode(DigitalInputChannelTable[indx],INPUT);
+		pullUpDnControl (DigitalInputChannelTable[indx],PUD_DOWN);
+		pinMode(DigitalOutputChannelTable[indx],OUTPUT);
 	}
 }
 
-void    SPI_Init(uint32_t speed, uint8_t mode)
+
+/*
+ * Description:
+ * 		This function shall initialize SPI connection to extention
+ *
+ * Parameters:
+ * 		- speed	: specify the SPI connection speed
+ * 		- mode	: can be one of the following
+ * 					- SPI_MODE_0	(Sample First	, clock idle stat low)
+ * 					- SPI_MODE_1	(Setup First	, clock idle stat low)
+ * 					- SPI_MODE_2	(Sample First	, clock idle stat high)
+ * 					- SPI_MODE_3	(Setup First	, clock idle stat high)
+ *
+ * Return:
+ * 		- none
+ */
+void SPI_Init(uint32_t speed, uint8_t mode)
 {
 	int SPI_fd;
 
 	SPI_fd = wiringPiSPISetupMode(0, speed, mode);
-
 }
 
-void    ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
+
+/*
+ * Description:
+ * 		- This function shall read all ADC channel from extention
+ * 		- Prerequest for this function is SPI_Init
+ *
+ * Parameters:
+ * 		- pData_arr: pointer to uint8_t to return values
+ * 		- data_size: number of channels that should be read
+ *
+ * Return:
+ * 		- none
+ */
+void ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
 {
 	uint32_t indx = 0;
-	uint8_t recData = 0xAA;			// CMD to get all channels value
+	uint8_t recData = CMD_SPI_ADC_REQUEST;			// CMD to get all channels value
 
 	wiringPiSPIDataRW(0, &recData, 1);
 	delay(1);
 
-	if(recData == 0xAA)
+	if(recData == CMD_SPI_ADC_REPLAY)
 	{
-		for ( int i =0 ; i < data_size ; i++)
+		for ( int i = 0 ; i < data_size ; i++)
 		{
 			wiringPiSPIDataRW(0, (pData_arr+i),1);
 		}
 	}	
 }	
+
+
+/*
+ * Description:
+ * 		- This function shall PWM initialize and select frequency
+ *
+ * Parameters:
+ * 		- pwm_freq: desired pwm
+ *
+ * Return:
+ * 		- none
+ */
+void PWM_Init(uint32_t pwm_freq)
+{
+	uint32_t pwm_div = 0;
+	uint8_t indx = 0;
+
+	/* Initialize pwm channels */
+	for(indx = 0; indx < DIGITAL_PWM_OUT_CHANNELS_NUM; ++indx)
+	{
+		pinMode(PWMOutputChannelTable[indx], PWM_OUTPUT);
+	}
+
+	pwmSetMode(PWM_MODE_MS);
+
+	/*
+		PWM frequency can be obtained by the following equation:
+			Freq = 19.2MHz/(PWM_DIV * PWM_RANGE)
+	*/
+	pwm_div = (PWM_RANGE * pwm_freq);
+	if(pwm_div > 0)
+	{
+		pwm_div = (PWM_MAX_FREQ/pwm_div);
+	}
+	else
+	{
+		pwm_div = 1;
+	}
+	
+    pwmSetRange(PWM_RANGE);
+    pwmSetClock(pwm_div);
+}
+
+
+
+/*
+ * Description:
+ * 		- This function shall write passed duty cycle to selected channel
+ *
+ * Parameters:
+ * 		- pwm_channel	: Channel number
+ * 		- duty			: value of duty cycle (0 to 100)
+ *
+ * Return:
+ * 		- none
+ */
+void PWM_Write(uint8_t pwm_channel, uint8_t duty)
+{
+	uint16_t range = 0;
+
+	range = (duty/100) * PWM_RANGE;
+	pwmWrite(pwm_channel, range);
+}
+
+
+
+
+
+
+
+
+
 
 
 

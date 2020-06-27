@@ -1,0 +1,6 @@
+PWM Specs:
+    - Max frequency 100KHz
+    - Range from 0 to 100
+
+SPI Specs:
+    - SPI mode 1 (setup with clock idle state low)
