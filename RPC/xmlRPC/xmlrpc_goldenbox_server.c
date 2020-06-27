@@ -232,6 +232,7 @@ static xmlrpc_value *adc_read_channel(xmlrpc_env      *const envP,
     xmlrpc_int32 result = 0;
 
     uint8_t adc_channels_value[8] = {0};
+    uint8_t indx = 0;
 
     /* Parsing arguments */
     xmlrpc_decompose_value(envP, paramArrayP, "(i)", &channel_num);
@@ -248,7 +249,12 @@ static xmlrpc_value *adc_read_channel(xmlrpc_env      *const envP,
 
 #if RPI_HOST
     ADC_AllChannelsRead(adc_channels_value, 8);
-    result = adc_channels_value[channel_num];
+    result = (xmlrpc_int32 )adc_channels_value[channel_num];
+
+    for(indx = 0; indx < 8; ++indx)
+    {
+        printf("Channel %d = %d", indx, adc_channels_value[indx]);
+    }
 #endif
 
     /* return the results */
