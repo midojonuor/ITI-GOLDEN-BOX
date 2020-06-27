@@ -26,12 +26,12 @@ XMLRPC_C_CONFIG = $(BLDDIR)/xmlrpc-c-config.test
 
 # Add the name of each external library 
 EXTERNAL_LIB = \
-	Dio \
+	peripherals \
 
 
 # Add the name of each external library with .o extension
 OBJ_FILE = \
-	Dio.o
+	peripherals.o \
 
 CLIENTPROGS = \
   auth_client \
@@ -129,8 +129,13 @@ $(SERVERPROGS_CGI):%.cgi:%_cgi.o
 
 
 # Add $(OBJ_FILE) for linking 
-$(SERVERPROGS_ABYSS):%:%.o 
-	$(CCLD) -o $@ $^ $(LIBS_SERVER_ABYSS) -l wiringPi $(OBJ_FILE) $(LDFLAGS_ALL)
+# if RPi is the HOST, replace line 136 with the following line
+#$(CCLD) -o $@ $^ $(LIBS_SERVER_ABYSS) -l wiringPi $(OBJ_FILE) $(LDFLAGS_ALL)
+
+$(SERVERPROGS_ABYSS):%:%.o
+	$(CCLD) -o $@ $^ $(LIBS_SERVER_ABYSS) $(OBJ_FILE) $(LDFLAGS_ALL)
+
+  
 	
 $(BASIC_PROGS):%:%.o
 	$(CCLD) -o $@ $^ $(LIBS_BASE) $(LDFLAGS_ALL)

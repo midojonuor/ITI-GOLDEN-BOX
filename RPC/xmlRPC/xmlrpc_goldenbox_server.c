@@ -25,7 +25,9 @@
 #include "config.h"
 
 /* include raspberry pi module */
-#include "Dio.h"
+#include "goldenbox_config.h"
+
+#include "peripherals.h"
 
 #ifdef _WIN32
 #define SLEEP(seconds)      SleepEx(seconds * 1000, 1)
@@ -33,7 +35,8 @@
 #define SLEEP(seconds)      sleep(seconds)
 #endif
 
-#define PORT_NUMBER                     5000
+#define PORT_NUMBER                     HIL_SERVER_PORT
+
 
 static xmlrpc_value *digital_output_set(xmlrpc_env      *const envP,
                                         xmlrpc_value    *const paramArrayP,
@@ -41,7 +44,7 @@ static xmlrpc_value *digital_output_set(xmlrpc_env      *const envP,
                                         void            *const channelInfo) 
 {
     xmlrpc_int32 channelNumber;
-    //xmlrpc_int32 result;
+    xmlrpc_int32 result = 0;
 
     /* Parsing arguments */
     xmlrpc_decompose_value(envP, paramArrayP, "(i)", &channelNumber);
@@ -52,12 +55,16 @@ static xmlrpc_value *digital_output_set(xmlrpc_env      *const envP,
         return NULL;
     }
 
-    // printf("channel %d has been set\n", channelNumber);
-    //DO_CH_SET(channelNumber);
-    
-   // result = 32;
+#if DEBUG
+    printf("channel %d has been set\n", channelNumber);
+#endif
+
+#if RPI_HOST
+    result = DO_CH_SET(channelNumber);
+#endif
+
     /* return the results */
-    return xmlrpc_build_value(envP, "i", DO_CH_SET(channelNumber));
+    return xmlrpc_build_value(envP, "i", result);
 }
 
 static xmlrpc_value *digital_output_reset(xmlrpc_env      *const envP,
@@ -66,7 +73,7 @@ static xmlrpc_value *digital_output_reset(xmlrpc_env      *const envP,
                                         void            *const channelInfo) 
 {
     xmlrpc_int32 channelNumber;
-    //xmlrpc_int32 result;
+    xmlrpc_int32 result = 0;
 
     /* Parsing arguments */
     xmlrpc_decompose_value(envP, paramArrayP, "(i)", &channelNumber);
@@ -77,12 +84,16 @@ static xmlrpc_value *digital_output_reset(xmlrpc_env      *const envP,
         return NULL;
     }
 
-    // printf("channel %d has been reset\n", channelNumber);
-    //DO_CH_RESET(channelNumber);
+#if DEBUG
+    printf("channel %d has been reset\n", channelNumber);
+#endif
+
+#if RPI_HOST
+    result = DO_CH_RESET(channelNumber);
+#endif
     
-    //result = 35;
     /* return the results */
-    return xmlrpc_build_value(envP, "i", DO_CH_RESET(channelNumber));
+    return xmlrpc_build_value(envP, "i", result);
 }
 
 static xmlrpc_value *digital_In_get(xmlrpc_env      *const envP,
@@ -91,7 +102,7 @@ static xmlrpc_value *digital_In_get(xmlrpc_env      *const envP,
                                         void            *const channelInfo) 
 {
     xmlrpc_int32 channelNumber;
-    xmlrpc_int32 result;
+    xmlrpc_int32 result = 0;
 
     /* Parsing arguments */
     xmlrpc_decompose_value(envP, paramArrayP, "(i)", &channelNumber);
@@ -102,12 +113,15 @@ static xmlrpc_value *digital_In_get(xmlrpc_env      *const envP,
         return NULL;
     }
 
-    printf("get channel %d status\n", channelNumber);
-    // DIO_CH_GET(channelNumber);
-    
-    
+#if DEBUG
+    printf("channel %d get status\n", channelNumber);
+#endif
+
+#if RPI_HOST
     /* return the results */
     result = DI_CH_GET(channelNumber);
+#endif
+    
     return xmlrpc_build_value(envP, "i", result);
 }
 
@@ -117,7 +131,7 @@ static xmlrpc_value *digital_Out_get(xmlrpc_env      *const envP,
                                         void            *const channelInfo) 
 {
     xmlrpc_int32 channelNumber;
-    //xmlrpc_int32 result;
+    xmlrpc_int32 result = 0;
 
     /* Parsing arguments */
     xmlrpc_decompose_value(envP, paramArrayP, "(i)", &channelNumber);
@@ -128,12 +142,117 @@ static xmlrpc_value *digital_Out_get(xmlrpc_env      *const envP,
         return NULL;
     }
 
-  //  printf("get channel %d status\n", channelNumber);
-    // DIO_CH_GET(channelNumber);
-    
+#if DEBUG
+   printf("channel %d get status\n", channelNumber);
+#endif
+
+#if RPI_HOST
+    result = DIO_CH_GET(channelNumber);
+#endif    
     
     /* return the results */
-    return xmlrpc_build_value(envP, "i", DO_CH_GET(channelNumber));
+    return xmlrpc_build_value(envP, "i", result);
+}
+
+
+static xmlrpc_value *goldenbox_init(xmlrpc_env      *const envP,
+                                        xmlrpc_value    *const paramArrayP,
+                                        void            *const serverInfo,
+                                        void            *const channelInfo) 
+{
+    uint32_t spi_speed  = 500000;
+
+    xmlrpc_int32 pwm_freq = 0;
+    xmlrpc_int32 errorState = 0;
+
+    /* Parsing arguments */
+    xmlrpc_decompose_value(envP, paramArrayP, "(i)", &pwm_freq);
+
+    /* check if any error occured while receiving parameters */
+    if(envP->fault_occurred)
+    {
+        return NULL;
+    }
+
+#if DEBUG
+   printf("Golden box initialized with pwm frequency %d\n", pwm_freq);
+#endif
+
+#if RPI_HOST
+    DIO_Init();
+    SPI_Init(spi_speed, SPI_MODE_1);
+    PWM_Init(pwm_freq);
+#endif
+
+    /* return the results */
+    return xmlrpc_build_value(envP, "i", errorState);
+}
+
+
+
+
+static xmlrpc_value *pwm_write(xmlrpc_env      *const envP,
+                                        xmlrpc_value    *const paramArrayP,
+                                        void            *const serverInfo,
+                                        void            *const channelInfo) 
+{
+    xmlrpc_int32 pwm_duty = 0;
+    xmlrpc_int32 channel_num = 0;
+    xmlrpc_int32 errorState = 0;
+
+    /* Parsing arguments */
+    xmlrpc_decompose_value(envP, paramArrayP, "(ii)", &channel_num, &pwm_duty);
+
+    /* check if any error occured while receiving parameters */
+    if(envP->fault_occurred)
+    {
+        return NULL;
+    }
+
+#if DEBUG
+   printf("PWM channel %d writes duty cycle %d\n", channel_num, pwm_duty);
+#endif
+
+#if RPI_HOST
+    PWM_Write(channel_num, pwm_duty);
+#endif
+
+    /* return the results */
+    return xmlrpc_build_value(envP, "i", errorState);
+}
+
+
+
+static xmlrpc_value *adc_read_channel(xmlrpc_env      *const envP,
+                                        xmlrpc_value    *const paramArrayP,
+                                        void            *const serverInfo,
+                                        void            *const channelInfo) 
+{
+    xmlrpc_int32 channel_num = 0;
+    xmlrpc_int32 result = 0;
+
+    uint8_t adc_channels_value[8] = {0};
+
+    /* Parsing arguments */
+    xmlrpc_decompose_value(envP, paramArrayP, "(i)", &channel_num);
+
+    /* check if any error occured while receiving parameters */
+    if(envP->fault_occurred)
+    {
+        return NULL;
+    }
+
+#if DEBUG
+   printf("Assert on ADC channel number %d \n", channel_num);
+#endif
+
+#if RPI_HOST
+    ADC_AllChannelsRead(adc_channels_value, 8);
+    result = ADC_AllChannelsRead[channel_num];
+#endif
+
+    /* return the results */
+    return xmlrpc_build_value(envP, "i", result);
 }
 
 
@@ -162,7 +281,21 @@ main(int const argc, const char **argv)
         "DO_CH_GET",
         &digital_Out_get
     };
+
+    struct xmlrpc_method_info3 const GoldenbOXInitMethodInfo = {
+        "Goldenbox_Init",
+        &goldenbox_init
+    };
     
+    struct xmlrpc_method_info3 const PWM_WriteMethodInfo = {
+        "PWM_Write",
+        &pwm_write
+    };
+
+    struct xmlrpc_method_info3 const ADC_ReadMethodInfo = {
+        "ADC_Read",
+        &adc_read_channel
+    };
 
     xmlrpc_server_abyss_parms serverParam;
     xmlrpc_registry *registeryP;
@@ -183,6 +316,10 @@ main(int const argc, const char **argv)
     xmlrpc_registry_add_method3(&env, registeryP, &DigitalInGetMethondInfo);
     xmlrpc_registry_add_method3(&env, registeryP, &DigitalSetMethondInfo);
     xmlrpc_registry_add_method3(&env, registeryP, &DigitalResetMethondInfo);
+
+    xmlrpc_registry_add_method3(&env, registeryP, &GoldenbOXInitMethodInfo);
+    xmlrpc_registry_add_method3(&env, registeryP, &PWM_WriteMethodInfo);
+    xmlrpc_registry_add_method3(&env, registeryP, &ADC_ReadMethodInfo);
     
     if(env.fault_occurred)
     {
