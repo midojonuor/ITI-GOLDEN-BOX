@@ -189,7 +189,7 @@ void DIO_Init(void)
 	/* using WiringPi numbering */ 
 	wiringPiSetup();
 	
-	for(indx = 0; indx < Digital_IN_CHANNELS_NUM ; ++indx)
+	for(indx = 0; indx < DIGITAL_IN_CHANNELS_NUM ; ++indx)
 	{
 		pinMode(DigitalInputChannelTable[indx],INPUT);
 		pullUpDnControl (DigitalInputChannelTable[indx],PUD_DOWN);
