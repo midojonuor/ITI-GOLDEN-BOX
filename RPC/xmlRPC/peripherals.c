@@ -86,6 +86,10 @@ static uint8_t PWMInputChannelTable[PWM_IN_CHANNELS_NUM] = {
 };
 
 
+static uint32_t SPI_Speed = 0;
+static uint8_t SPI_Mode = 0;
+
+
 /*
  * Description:
  * 		This function shall set high on a given channel
@@ -218,6 +222,8 @@ void SPI_Init(uint32_t speed, uint8_t mode)
 {
 	int SPI_fd;
 #if RPI_HOST
+	SPI_Mode = mode;
+	SPI_Speed = speed;
 	SPI_fd = wiringPiSPISetupMode(0, speed, mode);
 #endif
 }
@@ -243,7 +249,7 @@ void ADC_AllChannelsRead(uint8_t *pData_arr, uint8_t data_size)
 
 
 #if RPI_HOST
-	SPI_fd = wiringPiSPISetupMode(0, speed, mode);
+	SPI_fd = wiringPiSPISetupMode(0, SPI_Speed, SPI_Mode);
 
 	wiringPiSPIDataRW(0, &recData, 1);
 	delay(1);
